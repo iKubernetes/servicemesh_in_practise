@@ -1,0 +1,5 @@
+FROM envoyproxy/envoy-dev:latest
+
+RUN apt-get update && apt-get -q install -y curl net-tools
+
+CMD /usr/local/bin/envoy -c /etc/envoy/front-envoy.yaml --service-cluster front-proxy

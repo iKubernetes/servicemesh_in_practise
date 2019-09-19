@@ -1,0 +1,53 @@
+version: "3"
+services:
+
+  front-envoy:
+    build:
+      context: .
+      dockerfile: Dockerfile-frontenvoy
+    volumes:
+      - ./front-envoy.yaml:/etc/envoy/front-envoy.yaml
+      - ./certs/:/etc/envoy/certs/
+    networks:
+      - envoymesh
+    expose:
+      - "80"
+      - "443"
+      - "9901"
+    ports:
+      - "8080:80"
+      - "8443:443"
+      - "9901:9901"
+
+  service1:
+    build:
+      context: .
+      dockerfile: Dockerfile-service
+    volumes:
+      - ./service-envoy.yaml:/etc/envoy/service-envoy.yaml
+    networks:
+      envoymesh:
+        aliases:
+          - service1
+    environment:
+      - SERVICE_NAME=1
+    expose:
+      - "80"
+
+  service2:
+    build:
+      context: .
+      dockerfile: Dockerfile-service
+    volumes:
+      - ./service-envoy.yaml:/etc/envoy/service-envoy.yaml
+    networks:
+      envoymesh:
+        aliases:
+          - service2
+    environment:
+      - SERVICE_NAME=2
+    expose:
+      - "80"
+
+networks:
+  envoymesh: {}

@@ -1,0 +1,58 @@
+admin:
+  access_log_path: /tmp/admin.log
+  address:
+    socket_address: 
+      address: 127.0.0.1
+      port_value: 9901
+
+static_resources:
+  listeners:
+  - name: listener_0
+    address:
+      socket_address: { address: 127.0.0.1, port_value: 80 }
+    filter_chains:
+    - filters:
+      - name: envoy.http_connection_manager
+        config:
+          stat_prefix: egress_http
+          codec_type: AUTO
+          route_config:
+            name: test_route
+            virtual_hosts:
+            - name: web_service_1
+              domains: ["*.ik8s.io","ik8s.io"]
+              routes:
+              - match: { prefix: "/" }
+                route: { cluster: web_cluster_1 }
+            - name: web_service_2
+              domains: ["*.k8scast.cn","k8scast.cn"]
+              routes:
+              - match: { prefix: "/" }
+                route: { cluster: web_cluster_2 }
+          http_filters:
+          - name: envoy.router
+
+  clusters:
+  - name: web_cluster_1
+    connect_timeout: 0.25s
+    type: STRICT_DNS
+    lb_policy: ROUND_ROBIN
+    load_assignment:
+      cluster_name: web_cluster_1
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address: { address: myservice, port_value: 8081 }
+
+  - name: web_cluster_2
+    connect_timeout: 0.25s
+    type: STRICT_DNS
+    lb_policy: ROUND_ROBIN
+    load_assignment:
+      cluster_name: web_cluster_2
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address: { address: webserver1, port_value: 8081 }
