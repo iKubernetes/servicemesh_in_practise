@@ -1,0 +1,51 @@
+version: '3.3'
+services:
+  envoy:
+    build:
+      context: .
+      dockerfile: Dockerfile-envoy
+    networks:
+      envoymesh:
+        aliases:
+        - envoy
+    expose:
+    - "80"
+    - "9901"
+    depends_on:
+    - "xdsserver"
+
+  webserver1:
+    image: ikubernetes/mini-http-server:v0.3
+    networks:
+      envoymesh:
+        aliases:
+        - webserver1
+    expose:
+    - "8081"
+    depends_on:
+    - "envoy"
+
+  webserver2:
+    image: ikubernetes/mini-http-server:v0.3
+    networks:
+      envoymesh:
+        aliases:
+        - webserver2
+    expose:
+    - "8081"
+    depends_on:
+    - "envoy"
+
+  xdsserver:
+    image: ikubernetes/sxds
+    networks:
+      envoymesh:
+        aliases:
+        - xdsserver
+        - xds-service
+    expose:
+    - "8081"
+    - "8082"
+
+networks:
+  envoymesh: {}

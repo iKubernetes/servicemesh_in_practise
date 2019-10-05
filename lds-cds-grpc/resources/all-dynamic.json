@@ -1,0 +1,120 @@
+{
+  "version": "2.0",
+
+  "listeners": [
+    {
+      "name": "listener-http",
+      "address": {
+        "socket_address": {
+          "address": "0.0.0.0",
+          "port_value": 80
+        }
+      },
+      "filter_chains": [
+        {
+          "filters": [
+            {
+              "name": "envoy.http_connection_manager",
+              "config": {
+                "codec_type": "auto",
+                "stat_prefix": "egress_http",
+                "idle_timeout": "60s",
+                "drain_timeout": "5s",
+                "rds": {
+                  "config_source": {
+                    "api_config_source": {
+                      "api_type": "GRPC",
+                      "grpc_services": [
+                        {
+                          "envoy_grpc": {
+                            "cluster_name": "xds_cluster"
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "route_config_name": "local_route"
+                },
+                "http_filters": [
+                  {
+                    "name": "envoy.router",
+                    "config": {}
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+
+  "clusters": [
+    {
+      "name": "local_service",
+      "connect_timeout": "0.25s",
+      "lb_policy": "ROUND_ROBIN",
+      "type": "EDS",
+      "eds_cluster_config": {
+        "eds_config": {
+          "api_config_source": {
+            "api_type": "GRPC",
+            "grpc_services": [
+              {
+                "envoy_grpc": {
+                  "cluster_name": "xds_cluster"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+
+  "endpoints": [
+    {
+      "cluster_name": "local_service",
+      "endpoints": [
+        {
+          "lb_endpoints": [
+            {
+              "endpoint": {
+                "address": {
+                  "socket_address": {
+                    "address": "172.18.0.4",
+                    "port_value": 8081
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+
+  "routes": [
+    {
+      "name": "local_route",
+      "virtual_hosts": [
+        {
+          "name": "service",
+          "domains": [
+            "*"
+          ],
+          "routes": [
+            {
+              "match": {
+                "prefix": "/"
+              },
+              "route": {
+                "cluster": "local_service"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
