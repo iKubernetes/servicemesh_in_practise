@@ -10,7 +10,7 @@
               "endpoint": {
                 "address": {
                   "socket_address": {
-                    "address": "172.18.0.4",
+                    "address": "172.19.0.4",
                     "port_value": 8081
                   }
                 }

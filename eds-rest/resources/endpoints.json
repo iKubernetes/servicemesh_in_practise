@@ -1,7 +1,7 @@
 {
   "hosts": [
     {
-      "ip_address": "172.19.0.4",
+      "ip_address": "172.18.0.4",
       "port": 8081,
       "tags": {
         "az": "cn-north1-a",

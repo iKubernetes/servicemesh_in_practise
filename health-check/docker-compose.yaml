@@ -1,0 +1,52 @@
+version: '3'
+
+services:
+  front-envoy:
+    image: envoyproxy/envoy-alpine:v1.11.1
+    volumes:
+      - ./front-envoy.yaml:/etc/envoy/envoy.yaml
+    networks:
+      - envoymesh
+    expose:
+      # Expose ports 80 (for general traffic) and 9901 (for the admin server)
+      - "80"
+      - "9901"
+
+  service_blue:
+    image: ikubernetes/servicemesh-app:latest
+    networks:
+      envoymesh:
+        aliases:
+          - service_blue
+          - myservice
+    environment:
+      - SERVICE_NAME=blue
+    expose:
+      - "80"
+
+  service_green:
+    image: ikubernetes/servicemesh-app:latest
+    networks:
+      envoymesh:
+        aliases:
+          - service_green
+          - myservice
+    environment:
+      - SERVICE_NAME=green
+    expose:
+      - "80"
+
+  service_red:
+    image: ikubernetes/servicemesh-app:latest
+    networks:
+      envoymesh:
+        aliases:
+          - service_red
+          - myservice
+    environment:
+      - SERVICE_NAME=red
+    expose:
+      - "80"
+
+networks:
+  envoymesh: {}

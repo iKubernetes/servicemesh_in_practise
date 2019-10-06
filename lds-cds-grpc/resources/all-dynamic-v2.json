@@ -1,5 +1,5 @@
 {
-  "version": "3.0",
+  "version": "2.0",
 
   "listeners": [
     {
@@ -82,7 +82,7 @@
               "endpoint": {
                 "address": {
                   "socket_address": {
-                    "address": "172.18.0.4",
+                    "address": "172.12.0.4",
                     "port_value": 8081
                   }
                 }
@@ -92,7 +92,7 @@
               "endpoint": {
                 "address": {
                   "socket_address": {
-                    "address": "172.18.0.5",
+                    "address": "172.12.0.5",
                     "port_value": 8081
                   }
                 }
