@@ -39,6 +39,8 @@ static_resources:
     type: STRICT_DNS
     lb_policy: ROUND_ROBIN
     http2_protocol_options: {}
+    common_lb_config:
+      locality_weighted_lb_config: {}
     load_assignment:
       cluster_name: webcluster1
       policy:
@@ -47,15 +49,17 @@ static_resources:
       - locality:
           region: cn-north-1
         priority: 0
+        load_balancing_weight: 10
         lb_endpoints:
         - endpoint:
             address:
               socket_address:
-                address: colorful
+                address: colored
                 port_value: 80
       - locality:
           region: cn-north-2
-        priority: 1
+        priority: 0
+        load_balancing_weight: 20
         lb_endpoints:
         - endpoint:
             address:
