@@ -13,7 +13,7 @@ services:
       - "9901"
 
   service_blue:
-    image: ikubernetes/servicemesh-app:v0.3
+    image: ikubernetes/servicemesh-app:latest
     networks:
       envoymesh:
         aliases:
@@ -25,7 +25,7 @@ services:
       - "80"
 
   service_green:
-    image: ikubernetes/servicemesh-app:v0.3
+    image: ikubernetes/servicemesh-app:latest
     networks:
       envoymesh:
         aliases:
@@ -37,7 +37,7 @@ services:
       - "80"
 
   service_red:
-    image: ikubernetes/servicemesh-app:v0.3
+    image: ikubernetes/servicemesh-app:latest
     networks:
       envoymesh:
         aliases:

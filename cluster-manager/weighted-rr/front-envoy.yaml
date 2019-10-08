@@ -30,11 +30,6 @@ static_resources:
                   prefix: "/"
                 route:
                   cluster: webcluster1
-                  hash_policy:
-                  - connection_properties:
-                      source_ip: true
-                  - header:
-                      header_name: User-Agent
           http_filters:
           - name: envoy.router
 
@@ -42,9 +37,7 @@ static_resources:
   - name: webcluster1
     connect_timeout: 0.25s
     type: STRICT_DNS
-    lb_policy: RING_HASH
-    ring_hash_lb_config:
-      maximum_ring_size: 1048576
+    lb_policy: ROUND_ROBIN
     http2_protocol_options: {}
     load_assignment:
       cluster_name: webcluster1
@@ -53,5 +46,18 @@ static_resources:
         - endpoint:
             address:
               socket_address:
-                address: myservice
+                address: service_red
                 port_value: 80
+          load_balancing_weight: 1
+        - endpoint:
+            address:
+              socket_address:
+                address: service_blue
+                port_value: 80
+          load_balancing_weight: 3
+        - endpoint:
+            address:
+              socket_address:
+                address: service_green
+                port_value: 80
+          load_balancing_weight: 5
