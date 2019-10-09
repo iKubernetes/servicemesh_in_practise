@@ -41,32 +41,18 @@ static_resources:
     http2_protocol_options: {}
     load_assignment:
       cluster_name: webcluster1
-      policy:
-        overprovisioning_factor: 140
       endpoints:
-      - locality:
-          region: cn-north-1
-        priority: 0
-        lb_endpoints:
+      - lb_endpoints:
         - endpoint:
             address:
               socket_address:
-                address: colorful
+                address: colored
                 port_value: 80
-      - locality:
-          region: cn-north-2
-        priority: 1
-        lb_endpoints:
-        - endpoint:
-            address:
-              socket_address:
-                address: myservice
-                port_value: 80
-    health_checks:
-    - timeout: 5s
-      interval: 10s
-      unhealthy_threshold: 2
-      healthy_threshold: 1
-      http_health_check:
-        path: /healthz
-        expected_status: 200
+    outlier_detection:
+      interval: "10s"
+      consecutive_5xx: "3"
+      consecutive_gateway_failure: "3"
+      base_ejection_time: "60s"
+      enforcing_consecutive_gateway_failure: "100"
+      max_ejection_percent: "70"
+      success_rate_minimum_hosts: "3"
