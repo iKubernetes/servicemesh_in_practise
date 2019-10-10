@@ -48,5 +48,33 @@ services:
     expose:
       - "80"
 
+  service_gray:
+    image: ikubernetes/servicemesh-app:latest
+    volumes:
+      - ./service-envoy.yaml:/etc/envoy/envoy.yaml
+    networks:
+      envoymesh:
+        aliases:
+          - service_gray
+          - myservice
+    environment:
+      - SERVICE_NAME=gray
+    expose:
+      - "80"
+
+  service_black:
+    image: ikubernetes/servicemesh-app:latest
+    volumes:
+      - ./service-envoy.yaml:/etc/envoy/envoy.yaml
+    networks:
+      envoymesh:
+        aliases:
+          - service_black
+          - myservice
+    environment:
+      - SERVICE_NAME=black
+    expose:
+      - "80"
+
 networks:
   envoymesh: {}

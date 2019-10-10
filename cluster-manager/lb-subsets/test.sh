@@ -2,8 +2,6 @@
 declare -i v10=0
 declare -i v11=0
 
-declare -i counts=0
-
 for ((counts=0; counts<200; counts++)); do
 	if curl -s http://$1/service/host | grep -E "e[125]" &> /dev/null; then
 		# $1 is the host address of the front-envoy.

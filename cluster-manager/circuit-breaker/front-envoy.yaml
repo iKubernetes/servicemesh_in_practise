@@ -27,6 +27,10 @@ static_resources:
               - "*"
               routes:
               - match:
+                  prefix: "/service/colorless"
+                route:
+                  cluster: webcluster2
+              - match:
                   prefix: "/"
                 route:
                   cluster: webcluster1
@@ -38,7 +42,6 @@ static_resources:
     connect_timeout: 0.25s
     type: STRICT_DNS
     lb_policy: ROUND_ROBIN
-    http2_protocol_options: {}
     load_assignment:
       cluster_name: webcluster1
       endpoints:
@@ -51,6 +54,27 @@ static_resources:
     circuit_breakers:
       thresholds:         
         max_connections: 1
-        max_pending_requests: 2
-        max_requests: 2
-        max_retries: 2
+        max_pending_requests: 1
+        max_retries: 3
+
+  - name: webcluster2
+    connect_timeout: 0.25s
+    type: STRICT_DNS
+    lb_policy: ROUND_ROBIN
+    load_assignment:
+      cluster_name: webcluster2
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: myservice
+                port_value: 80
+    outlier_detection:
+      interval: "1s"
+      consecutive_5xx: "3"
+      consecutive_gateway_failure: "3"
+      base_ejection_time: "10s"
+      enforcing_consecutive_gateway_failure: "100"
+      max_ejection_percent: "30"
+      success_rate_minimum_hosts: "2"
