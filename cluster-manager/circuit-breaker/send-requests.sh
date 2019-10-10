@@ -9,14 +9,14 @@ fi
 URL=$1
 COUNT=$2
 c=1
-interval="0.2"
+#interval="0.2"
 
 while [[ ${c} -le ${COUNT} ]];
 do
   echo "Sending GET request: ${URL}"
   curl -o /dev/null -w '%{http_code}\n' -s ${URL} &
   (( c++ ))
-  sleep $interval
+#  sleep $interval
 done
 
 wait
