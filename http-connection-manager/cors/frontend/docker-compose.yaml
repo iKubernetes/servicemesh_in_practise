@@ -1,0 +1,31 @@
+version: "3"
+services:
+
+  front-envoy:
+    image: envoyproxy/envoy-alpine:v1.11.2
+    volumes:
+      - ./front-envoy.yaml:/etc/envoy/envoy.yaml
+    networks:
+      - envoymesh
+    expose:
+      - "80"
+      - "9901"
+    ports:
+      - "8080:80"
+      - "9901:9901"
+
+  frontend-service:
+    build:
+      context: .
+      dockerfile: Dockerfile-service
+    volumes:
+      - ./service-envoy.yaml:/etc/envoy/envoy.yaml
+    networks:
+      envoymesh:
+        aliases:
+          - frontendservice
+    expose:
+      - "80"
+
+networks:
+  envoymesh: {}
