@@ -36,7 +36,7 @@ static_resources:
                 type: fixed
                 fixed_delay: 10s
                 percentage:
-                  numerator: 50
+                  numerator: 10
                   denominator: HUNDRED
           - name: envoy.router
             config: {}

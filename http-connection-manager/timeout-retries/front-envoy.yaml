@@ -32,12 +32,12 @@ static_resources:
                   cluster: blue_abort
                   retry_policy:
                     retry_on: "5xx"
-                    num_retries: 1
+                    num_retries: 3
               - match:
                   prefix: "/service/red"
                 route:
                   cluster: red_delay
-                  timeout: 5s
+                  timeout: 1s
               - match:
                   prefix: "/service/green"
                 route:
