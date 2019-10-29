@@ -1,12 +1,12 @@
 node:
-  id: service-b
+  id: service-c
   cluster: mycluster
 
 stats_sinks:
 - name: envoy.statsd
   config:
     tcp_cluster_name: statsd-exporter
-    prefix: service-b
+    prefix: service-c
 
 admin:
   access_log_path: "/tmp/admin_access.log"
@@ -17,11 +17,11 @@ admin:
 
 static_resources:
   listeners:
-  - name: service-b-svc-http-listener
+  - name: service-c-svc-http-listener
     address:
       socket_address:
         address: 0.0.0.0
-        port_value: 8789
+        port_value: 8790
     filter_chains:
     - filters:
       - name: envoy.http_connection_manager
@@ -30,27 +30,28 @@ static_resources:
           - name: envoy.file_access_log
             config:
               path: "/dev/stdout"
-              json_format: {"start": "[%START_TIME%] ", "method": "%REQ(:METHOD)%", "url": "%REQ(X-ENVOY-ORIGINAL-PATH?:PATH)%", "protocol": "%PROTOCOL%", "status": "%RESPONSE_CODE%", "respflags": "%RESPONSE_FLAGS%", "bytes-received": "%BYTES_RECEIVED%", "bytes-sent": "%BYTES_SENT%", "duration": "%DURATION%", "upstream-service-time": "%RESP(X-ENVOY-UPSTREAM-SERVICE-TIME)%", "x-forwarded-for": "%REQ(X-FORWARDED-FOR)%", "user-agent": "%REQ(USER-AGENT)%", "request-id": "%REQ(X-REQUEST-ID)%", "authority": "%REQ(:AUTHORITY)%", "upstream-host": "%UPSTREAM_HOST%", "remote-ip": "%DOWNSTREAM_REMOTE_ADDRESS_WITHOUT_PORT%"}
+              format: "[ACCESS_LOG][%START_TIME%] \"%REQ(:METHOD)% %REQ(X-ENVOY-ORIGINAL-PATH?:PATH)% %PROTOCOL%\" %RESPONSE_CODE% %RESPONSE_FLAGS% %BYTES_RECEIVED% %BYTES_SENT% %DURATION% %RESP(X-ENVOY-UPSTREAM-SERVICE-TIME)% \"%REQ(X-FORWARDED-FOR)%\" \"%REQ(USER-AGENT)%\" \"%REQ(X-REQUEST-ID)%\" \"%REQ(:AUTHORITY)%\" \"%UPSTREAM_HOST%\" \"%DOWNSTREAM_REMOTE_ADDRESS_WITHOUT_PORT%\"\n"
           stat_prefix: ingress_8786
           codec_type: AUTO
           route_config:
-            name: service-b-svc-http-route
+            name: service-c-svc-http-route
             virtual_hosts:
-            - name: service-b-svc-http-route
+            - name: service-c-svc-http-route
               domains:
               - "*"
               routes:
               - match:
                   prefix: "/"
                 route:
-                  cluster: service_b
+                  cluster: service_c
           http_filters:
           - name: envoy.fault
             config:
-              abort:
-                http_status: 503
+              delay:
+                type: fixed
+                fixed_delay: 1s
                 percentage:
-                  numerator: 15
+                  numerator: 10
                   denominator: HUNDRED
           - name: envoy.router
 
@@ -64,11 +65,11 @@ static_resources:
         address: statsd_exporter
         port_value: 9125
 
-  - name: service_b
+  - name: service_c
     connect_timeout: 0.25s
     type: strict_dns
     lb_policy: ROUND_ROBIN
     hosts:
     - socket_address:
-        address: service_b
-        port_value: 8082
+        address: service_c
+        port_value: 8083

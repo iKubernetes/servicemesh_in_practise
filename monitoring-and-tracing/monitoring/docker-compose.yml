@@ -118,43 +118,5 @@ services:
     ports:
     - 3000:3000
 
-  elasticsearch:
-    image: "docker.elastic.co/elasticsearch/elasticsearch:7.4.1"
-    environment:
-    - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
-    - "discovery.type=single-node"
-    networks:
-      envoymesh:
-        aliases:
-          - es
-    ports:
-    - "9200:9200"
-    volumes:
-    - elasticsearch_data:/usr/share/elasticsearch/data
-
-  kibana:
-    image: "docker.elastic.co/kibana/kibana:7.4.1"
-    networks:
-      envoymesh:
-        aliases:
-          - kibana
-    ports:
-    - "5601:5601"
-
-  filebeat:
-    image: "docker.elastic.co/beats/filebeat:7.4.1"
-    networks:
-      envoymesh:
-        aliases:
-          - filebeat
-    user: root
-    volumes:
-    - ./filebeat/filebeat.yaml:/usr/share/filebeat/filebeat.yml:ro
-    - /var/lib/docker:/var/lib/docker:ro
-    - /var/run/docker.sock:/var/run/docker.sock
-
-volumes:
-    elasticsearch_data:
-
 networks:
   envoymesh: {}

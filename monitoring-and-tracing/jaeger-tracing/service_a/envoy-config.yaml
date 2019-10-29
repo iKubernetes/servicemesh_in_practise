@@ -1,12 +1,15 @@
 node:
   id: service-a
-  cluster: mycluster
+  cluster: service-a
 
-stats_sinks:
-- name: envoy.statsd
-  config:
-    tcp_cluster_name: statsd-exporter
-    prefix: service-a
+tracing:
+  http:
+    name: envoy.zipkin
+    typed_config:
+      "@type": type.googleapis.com/envoy.config.trace.v2.ZipkinConfig
+      collector_cluster: jaeger
+      collector_endpoint: "/api/v1/spans"
+      shared_span_context: false
 
 admin:
   access_log_path: "/tmp/admin_access.log"
@@ -26,11 +29,13 @@ static_resources:
     - filters:
       - name: envoy.http_connection_manager
         config:
+          generate_request_id: true
+          tracing:
+            operation_name: ingress
           access_log:
           - name: envoy.file_access_log
             config:
               path: "/dev/stdout"
-              json_format: {"start": "[%START_TIME%] ", "method": "%REQ(:METHOD)%", "url": "%REQ(X-ENVOY-ORIGINAL-PATH?:PATH)%", "protocol": "%PROTOCOL%", "status": "%RESPONSE_CODE%", "respflags": "%RESPONSE_FLAGS%", "bytes-received": "%BYTES_RECEIVED%", "bytes-sent": "%BYTES_SENT%", "duration": "%DURATION%", "upstream-service-time": "%RESP(X-ENVOY-UPSTREAM-SERVICE-TIME)%", "x-forwarded-for": "%REQ(X-FORWARDED-FOR)%", "user-agent": "%REQ(USER-AGENT)%", "request-id": "%REQ(X-REQUEST-ID)%", "authority": "%REQ(:AUTHORITY)%", "upstream-host": "%UPSTREAM_HOST%", "remote-ip": "%DOWNSTREAM_REMOTE_ADDRESS_WITHOUT_PORT%"}
           stat_prefix: ingress_8786
           codec_type: AUTO
           route_config:
@@ -56,11 +61,13 @@ static_resources:
     - filters:
       - name: envoy.http_connection_manager
         config:
+          generate_request_id: true
+          tracing:
+            operation_name: egress
           access_log:
           - name: envoy.file_access_log
             config:
               path: "/dev/stdout"
-              json_format: {"start": "[%START_TIME%] ", "method": "%REQ(:METHOD)%", "url": "%REQ(X-ENVOY-ORIGINAL-PATH?:PATH)%", "protocol": "%PROTOCOL%", "status": "%RESPONSE_CODE%", "respflags": "%RESPONSE_FLAGS%", "bytes-received": "%BYTES_RECEIVED%", "bytes-sent": "%BYTES_SENT%", "duration": "%DURATION%", "upstream-service-time": "%RESP(X-ENVOY-UPSTREAM-SERVICE-TIME)%", "x-forwarded-for": "%REQ(X-FORWARDED-FOR)%", "user-agent": "%REQ(USER-AGENT)%", "request-id": "%REQ(X-REQUEST-ID)%", "authority": "%REQ(:AUTHORITY)%", "upstream-host": "%UPSTREAM_HOST%", "remote-ip": "%DOWNSTREAM_REMOTE_ADDRESS_WITHOUT_PORT%"}
           stat_prefix: egress_8788
           codec_type: AUTO
           route_config:
@@ -85,17 +92,19 @@ static_resources:
     - filters:
       - name: envoy.http_connection_manager
         config:
+          generate_request_id: true
+          tracing:
+            operation_name: egress
           access_log:
           - name: envoy.file_access_log
             config:
               path: "/dev/stdout"
-              json_format: {"start": "[%START_TIME%] ", "method": "%REQ(:METHOD)%", "url": "%REQ(X-ENVOY-ORIGINAL-PATH?:PATH)%", "protocol": "%PROTOCOL%", "status": "%RESPONSE_CODE%", "respflags": "%RESPONSE_FLAGS%", "bytes-received": "%BYTES_RECEIVED%", "bytes-sent": "%BYTES_SENT%", "duration": "%DURATION%", "upstream-service-time": "%RESP(X-ENVOY-UPSTREAM-SERVICE-TIME)%", "x-forwarded-for": "%REQ(X-FORWARDED-FOR)%", "user-agent": "%REQ(USER-AGENT)%", "request-id": "%REQ(X-REQUEST-ID)%", "authority": "%REQ(:AUTHORITY)%", "upstream-host": "%UPSTREAM_HOST%", "remote-ip": "%DOWNSTREAM_REMOTE_ADDRESS_WITHOUT_PORT%"}
           stat_prefix: egress_8788
           codec_type: AUTO
           route_config:
-            name: service-c-svc-http-route
+            name: service-b-svc-http-route
             virtual_hosts:
-            - name: service-c-svc-http-route
+            - name: service-b-svc-http-route
               domains:
               - "*"
               routes:
@@ -105,21 +114,20 @@ static_resources:
                   cluster: service_c
           http_filters:
           - name: envoy.router
-
   clusters:
-  - name: statsd-exporter
-    connect_timeout: 0.25s
+  - name: jaeger
+    connect_timeout: 1s
     type: strict_dns
-    lb_policy: ROUND_ROBIN
+    lb_policy: round_robin
     load_assignment:
-      cluster_name: statsd-exporter
+      cluster_name: jaeger
       endpoints:
       - lb_endpoints:
         - endpoint:
             address:
               socket_address:
-                address: statsd_exporter
-                port_value: 9125
+                address: jaeger
+                port_value: 9411
 
   - name: service_a
     connect_timeout: 0.25s
