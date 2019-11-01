@@ -60,7 +60,7 @@ static_resources:
 
   - name: statsd_exporter
     connect_timeout: 0.25s
-    type: STRICT_DNS
+    type: strict_dns
     lb_policy: ROUND_ROBIN
     http2_protocol_options: {}
     load_assignment:

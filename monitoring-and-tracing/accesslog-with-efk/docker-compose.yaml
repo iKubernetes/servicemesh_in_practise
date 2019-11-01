@@ -68,6 +68,7 @@ services:
       envoymesh:
         aliases:
           - kibana
+          - kib
     ports:
     - "5601:5601"
 
@@ -77,6 +78,7 @@ services:
       envoymesh:
         aliases:
           - filebeat
+          - fb
     user: root
     volumes:
     - ./filebeat/filebeat.yaml:/usr/share/filebeat/filebeat.yml:ro
