@@ -83,7 +83,7 @@ services:
     - 8083:8083
 
   zipkin:
-    image: openzipkin/zipkin:latest
+    image: openzipkin/zipkin
     networks:
       envoymesh:
         aliases:

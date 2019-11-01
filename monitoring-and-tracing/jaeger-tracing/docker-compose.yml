@@ -83,7 +83,7 @@ services:
     - 8083:8083
 
   jaeger:
-    image: jaegertracing/all-in-one:latest
+    image: jaegertracing/all-in-one
     environment:
       - COLLECTOR_ZIPKIN_HTTP_PORT=9411
     networks:
