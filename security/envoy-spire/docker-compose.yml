@@ -1,0 +1,72 @@
+version: '3'
+services:
+  spire-server:
+    build: ./docker/spire-server
+    hostname: spire-server
+    tty: true
+    privileged: true
+    networks:
+      envoymesh:
+        aliases:
+          - spire-server
+    expose:
+    - "9081"
+
+  db:
+    build: ./docker/db
+    hostname: db
+    volumes:
+    - ./bootstrap/bootstrap.crt:/opt/spire/conf/agent/bootstrap.crt
+    tty: true
+    privileged: true
+    networks:
+      envoymesh:
+        aliases:
+          - db
+
+  backend:
+    build: ./docker/backend
+    hostname: backend
+    volumes:
+    - ./bootstrap/bootstrap.crt:/opt/spire/conf/agent/bootstrap.crt
+    tty: true
+    privileged: true
+    networks:
+      envoymesh:
+        aliases:
+          - backend
+    expose:
+      - "8001"
+
+  web:
+    build: ./docker/web
+    hostname: web
+    volumes:
+    - ./bootstrap/bootstrap.crt:/opt/spire/conf/agent/bootstrap.crt
+    tty: true
+    privileged: true
+    networks:
+      envoymesh:
+        aliases:
+          - web
+    expose:
+      - "8001"
+      - "8002"
+      - "9901"
+    ports:
+      - "8001:8001"
+      - "8002:8002"
+      - "9901:9901"
+
+  api-server-1:
+    build:
+      context: ./docker/api-server
+    networks:
+      envoymesh:
+    expose:
+      - "5000"
+    ports:
+      - "5000:5000"
+
+networks:
+  envoymesh: {}
