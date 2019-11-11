@@ -1,0 +1,27 @@
+version: "3"
+services:
+
+  opa:
+    image: openpolicyagent/opa:latest-istio
+    volumes:
+    - ./opa/policies:/policies
+    - ./opa/config:/config
+    command:
+    - run
+    - --server
+    - --log-level=debug
+    - --set=decision_logs.console=true
+    - --config-file=/config/config.yaml
+    - --ignore=.*
+    - /policies/policy.rego
+    networks:
+      envoymesh:
+        aliases:
+          - opa
+    expose:
+      - "9191"
+    ports:
+      - "9191:9191"
+
+networks:
+  envoymesh: {}

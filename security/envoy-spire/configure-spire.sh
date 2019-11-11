@@ -28,7 +28,7 @@ echo "${bb}Bootstrapping trust between SPIRE agents and SPIRE server...${nn}"
 #	docker-compose exec -T backend tee conf/agent/bootstrap.crt > /dev/null
 #docker-compose exec -T spire-server bin/spire-server bundle show |
 #	docker-compose exec -T db tee conf/agent/bootstrap.crt > /dev/null
-docker-compose exec -T spire-server bin/spire-server bundle show > ./docker/bootstrap/bootstrap.crt
+docker-compose exec -T spire-server bin/spire-server bundle show > ./bootstrap/bootstrap.crt
 
 # Start up the web server SPIRE agent.
 echo "${bb}Starting web server SPIRE agent...${nn}"
