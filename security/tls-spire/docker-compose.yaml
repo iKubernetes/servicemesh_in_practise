@@ -1,0 +1,117 @@
+version: '3'
+
+services:
+  spire-server:
+    image: ikubernetes/spire-server:unstable
+    volumes:
+      - ./spire-server/spire-server.conf:/opt/spire/conf/server/server.conf
+      - ./spire-server/ca.crt:/opt/spire/conf/server/agent-cacert.pem
+    hostname: spire-server
+    tty: true
+    privileged: true
+    networks:
+      envoymesh:
+        aliases:
+          - spire-server
+
+  front-envoy:
+    build: ./front-envoy
+    hostname: front-envoy
+    tty: true
+    privileged: true
+    volumes:
+      - ./front-envoy/envoy.yaml:/etc/envoy/envoy.yaml
+      - ./bootstrap/bootstrap.crt:/opt/spire/conf/agent/bootstrap.crt
+      - ./front-envoy/server.crt:/etc/envoy/certs/server.crt
+      - ./front-envoy/server.key:/etc/envoy/certs/server.key
+    networks:
+      - envoymesh
+    expose:
+      # Expose ports 80 (for general traffic) and 9901 (for the admin server)
+      - "80"
+      - "443"
+      - "9901"
+    ports:
+      - "8080:80"
+      - "8443:443"
+      - "9901:9901"
+
+  blue:
+    image: ikubernetes/servicemesh-app:latest
+    networks:
+      envoymesh:
+        aliases:
+          - myservice
+          - service-blue
+          - blue
+    environment:
+      - SERVICE_NAME=blue
+    expose:
+      - "80"
+
+  green:
+    image: ikubernetes/servicemesh-app:latest
+    networks:
+      envoymesh:
+        aliases:
+          - myservice
+          - service-green
+          - green
+    environment:
+      - SERVICE_NAME=green
+    expose:
+      - "80"
+
+  red:
+    image: ikubernetes/servicemesh-app:latest
+    networks:
+      envoymesh:
+        aliases:
+          - myservice
+          - service-red
+          - red
+    environment:
+      - SERVICE_NAME=red
+    expose:
+      - "80"
+
+  service-gray:
+    build: ./service-gray
+    hostname: service-gray
+    tty: true
+    privileged: true
+    volumes:
+      - ./service-gray/envoy.yaml:/etc/envoy/envoy.yaml
+      - ./bootstrap/bootstrap.crt:/opt/spire/conf/agent/bootstrap.crt
+    networks:
+      envoymesh:
+        aliases:
+          - gray
+          - service-gray
+    environment:
+      - SERVICE_NAME=gray
+    expose:
+      - "80"
+      - "443"
+
+  service-purple:
+    build: ./service-purple
+    hostname: service-purple
+    tty: true
+    privileged: true
+    volumes:
+      - ./service-purple/envoy.yaml:/etc/envoy/envoy.yaml
+      - ./bootstrap/bootstrap.crt:/opt/spire/conf/agent/bootstrap.crt
+    networks:
+      envoymesh:
+        aliases:
+          - purple
+          - service-purple
+    environment:
+      - SERVICE_NAME=purple
+    expose:
+      - "80"
+      - "443"
+
+networks:
+  envoymesh: {}
