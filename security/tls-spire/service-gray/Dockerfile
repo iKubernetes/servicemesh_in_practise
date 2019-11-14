@@ -1,4 +1,5 @@
 FROM ikubernetes/spire-agent:unstable as spire
+#FROM gcr.io/spiffe-io/spire-agent:unstable as spire
 
 FROM ikubernetes/servicemesh-app:latest
 RUN mkdir -p /opt/spire/conf/agent
