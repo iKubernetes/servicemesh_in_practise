@@ -22,12 +22,6 @@ DB_AGENT_FINGERPRINT=$(fingerprint docker/db/conf/agent.crt.pem)
 # trust bundle (see UpstreamCA under
 # https://github.com/spiffe/spire/blob/master/doc/spire_server.md#plugin-types)
 echo "${bb}Bootstrapping trust between SPIRE agents and SPIRE server...${nn}"
-#docker-compose exec -T spire-server bin/spire-server bundle show |
-#	docker-compose exec -T web tee conf/agent/bootstrap.crt > /dev/null
-#docker-compose exec -T spire-server bin/spire-server bundle show |
-#	docker-compose exec -T backend tee conf/agent/bootstrap.crt > /dev/null
-#docker-compose exec -T spire-server bin/spire-server bundle show |
-#	docker-compose exec -T db tee conf/agent/bootstrap.crt > /dev/null
 docker-compose exec -T spire-server bin/spire-server bundle show > ./docker/bootstrap/bootstrap.crt
 
 # Start up the web server SPIRE agent.
