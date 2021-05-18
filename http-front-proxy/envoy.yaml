@@ -37,7 +37,7 @@ static_resources:
       - lb_endpoints:
         - endpoint:
             address:
-              socket_address: { address: 172.31.0.11, port_value: 8080 }
+              socket_address: { address: 172.31.2.11, port_value: 8080 }
         - endpoint:
             address:
-              socket_address: { address: 172.31.0.12, port_value: 8080 }
+              socket_address: { address: 172.31.2.12, port_value: 8080 }

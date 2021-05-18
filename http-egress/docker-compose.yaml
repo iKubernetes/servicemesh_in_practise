@@ -1,40 +1,46 @@
 version: '3.3'
+
 services:
   envoy:
-    build:
-      context: .
-      dockerfile: Dockerfile-envoy
+    image: envoyproxy/envoy-alpine:v1.18-latest
     volumes:
     - ./envoy.yaml:/etc/envoy/envoy.yaml
     networks:
       envoymesh:
+        ipv4_address: 172.31.4.2
         aliases:
-        - envoy
+        - front-proxy
     depends_on:
-    - webserver1
-    - webserver2
-    expose:
-    - "80"
+    - webserver01
+    - webserver02
 
-  webserver1:
-    image: ikubernetes/mini-http-server:v0.3
+  client:
+    image: ikubernetes/admin-toolbox:v1.0
+    network_mode: "service:envoy"
+    depends_on:
+    - envoy
+
+  webserver01:
+    image: ikubernetes/demoapp:v1.0
+    hostname: webserver01
     networks:
       envoymesh:
+        ipv4_address: 172.31.4.11
         aliases:
-        - webserver1
-        - myservice
-    expose:
-    - "8081"
+        - webserver01
 
-  webserver2:
-    image: ikubernetes/mini-http-server:v0.3
+  webserver02:
+    image: ikubernetes/demoapp:v1.0
+    hostname: webserver02
     networks:
       envoymesh:
+        ipv4_address: 172.31.4.12
         aliases:
-        - webserver2
-        - myservice
-    expose:
-    - "8081"
+        - webserver02
 
 networks:
-  envoymesh: {}
+  envoymesh:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.4.0/24

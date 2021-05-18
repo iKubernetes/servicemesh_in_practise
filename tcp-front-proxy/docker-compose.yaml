@@ -7,7 +7,7 @@ services:
     - ./envoy.yaml:/etc/envoy/envoy.yaml
     networks:
       envoymesh:
-        ipv4_address: 172.31.0.2
+        ipv4_address: 172.31.1.2
         aliases:
         - front-proxy
     depends_on:
@@ -21,7 +21,7 @@ services:
     hostname: webserver01
     networks:
       envoymesh:
-        ipv4_address: 172.31.0.11
+        ipv4_address: 172.31.1.11
         aliases:
         - webserver01
 
@@ -32,7 +32,7 @@ services:
     hostname: webserver02
     networks:
       envoymesh:
-        ipv4_address: 172.31.0.12
+        ipv4_address: 172.31.1.12
         aliases:
         - webserver02
 
@@ -41,4 +41,4 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.31.0.0/16
+        - subnet: 172.31.1.0/24
