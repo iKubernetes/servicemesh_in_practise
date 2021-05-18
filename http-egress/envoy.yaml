@@ -1,3 +1,5 @@
+# Author: MageEdu <mage@magedu.com>
+# Site: www.magedu.com
 static_resources:
   listeners:
   - name: listener_0

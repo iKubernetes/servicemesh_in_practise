@@ -14,7 +14,7 @@ docker-compose up
 
 2. 于容器client的交互式接口中进行测试
 ```
-docker exec -it http-egress-client-1
+docker exec -it http-egress_client_1  /bin/sh
 curl 127.0.0.1 
 ```
 
@@ -23,5 +23,5 @@ curl 127.0.0.1
 docker-compose down
 ```
 
-## 版本声明
+## 版权声明
 本文档版本归[马哥教育](www.magedu.com)所有，未经允许，不得随意转载和商用。
