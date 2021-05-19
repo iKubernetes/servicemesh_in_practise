@@ -1,0 +1,41 @@
+version: '3.3'
+
+services:
+  envoy:
+    image: envoyproxy/envoy-alpine:v1.18-latest
+    volumes:
+    - ./envoy.yaml:/etc/envoy/envoy.yaml
+    networks:
+      envoymesh:
+        aliases:
+        - front-proxy
+    depends_on:
+    - webserver01
+    - webserver02
+
+  webserver01:
+    image: ikubernetes/demoapp:v1.0
+    environment:
+      - PORT=8080
+    hostname: webserver01
+    networks:
+      envoymesh:
+        aliases:
+        - webserver01
+
+  webserver02:
+    image: ikubernetes/demoapp:v1.0
+    environment:
+      - PORT=8080
+    hostname: webserver02
+    networks:
+      envoymesh:
+        aliases:
+        - webserver02
+
+networks:
+  envoymesh:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.10.0/24

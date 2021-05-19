@@ -1,3 +1,5 @@
+# Author: MageEdu <mage@magedu.com>
+# Site: www.magedu.com
 admin:
   profile_path: /tmp/envoy.prof
   access_log_path: /tmp/admin_access.log
@@ -35,7 +37,7 @@ static_resources:
           common_tls_context:
             tls_certificates:
             # The following self-signed certificate pair is generated using:
-            # $ openssl req -x509 -newkey rsa:2048 -keyout a/front-proxy.key -out  a/front-proxy.crt -days 3650 -nodes -subj '/CN=www.magedu.com'
+            # $ openssl req -x509 -newkey rsa:2048 -keyout front-proxy.key -out front-proxy.crt -days 3650 -nodes -subj '/CN=www.magedu.com'
             #
             - certificate_chain:
                 filename: "/etc/envoy/certs/front-proxy.crt"

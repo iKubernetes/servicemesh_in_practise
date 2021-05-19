@@ -1,12 +1,9 @@
-# Author: MageEdu <mage@magedu.com>
-# Site: www.magedu.com
 admin:
-  profile_path: /tmp/envoy.prof
-  access_log_path: /tmp/admin_access.log
+  access_log_path: "/dev/null"
   address:
     socket_address:
-       address: 0.0.0.0
-       port_value: 9901
+      address: 0.0.0.0
+      port_value: 9901
 
 static_resources:
   listeners:
@@ -23,7 +20,7 @@ static_resources:
           route_config:
             name: local_route
             virtual_hosts:
-            - name: local_service 
+            - name: web_service_1
               domains: ["*"]
               routes:
               - match: { prefix: "/" }
@@ -34,7 +31,8 @@ static_resources:
   clusters:
   - name: local_cluster
     connect_timeout: 0.25s
-    type: STATIC
+    type: STRICT_DNS 
+    dns_lookup_family: V4_ONLY
     lb_policy: ROUND_ROBIN
     load_assignment:
       cluster_name: local_cluster
@@ -42,4 +40,7 @@ static_resources:
       - lb_endpoints:
         - endpoint:
             address:
-              socket_address: { address: 127.0.0.1, port_value: 8080 }
+              socket_address: { address: webserver01, port_value: 8080 }
+        - endpoint:
+            address:
+              socket_address: { address: webserver02, port_value: 8080 }
