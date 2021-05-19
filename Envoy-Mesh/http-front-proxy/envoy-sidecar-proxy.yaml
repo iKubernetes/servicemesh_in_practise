@@ -21,19 +21,14 @@ static_resources:
           route_config:
             name: local_route
             virtual_hosts:
-            - name: web_service_1
-              domains: ["*.ik8s.io", "ik8s.io"]
+            - name: local_service 
+              domains: ["*"]
               routes:
               - match: { prefix: "/" }
                 route: { cluster: local_cluster }
-            - name: web_service_2
-              domains: ["*.magedu.com",“magedu.com"]
-              routes:
-              - match: { prefix: "/" }
-                redirect:
-                  host_redirect: "www.ik8s.io"
           http_filters:
           - name: envoy.filters.http.router
+
   clusters:
   - name: local_cluster
     connect_timeout: 0.25s
@@ -45,7 +40,4 @@ static_resources:
       - lb_endpoints:
         - endpoint:
             address:
-              socket_address: { address: 172.31.5.11, port_value: 8080 }
-        - endpoint:
-            address:
-              socket_address: { address: 172.31.5.12, port_value: 8080 }
+              socket_address: { address: 127.0.0.1, port_value: 8080 }

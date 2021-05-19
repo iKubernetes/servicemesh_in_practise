@@ -14,7 +14,8 @@ docker-compose up
 
 2. 测试
 ```
-curl 172.31.2.2
+curl -H "host: www.ik8s.io" 172.31.2.2
+curl -I -H "host: www.magedu.com" 172.31.2.2
 ```
 
 3. 停止后清理

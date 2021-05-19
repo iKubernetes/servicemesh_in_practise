@@ -21,31 +21,39 @@ static_resources:
           route_config:
             name: local_route
             virtual_hosts:
-            - name: web_service_1
-              domains: ["*.ik8s.io", "ik8s.io"]
+            - name: web_service_01
+              domains: ["*.magedu.com", "magedu.com"]
               routes:
               - match: { prefix: "/" }
-                route: { cluster: local_cluster }
-            - name: web_service_2
-              domains: ["*.magedu.com",“magedu.com"]
+                route: { cluster: web_cluster_01 }
+            - name: web_service_02
+              domains: ["*"]
               routes:
               - match: { prefix: "/" }
-                redirect:
-                  host_redirect: "www.ik8s.io"
+                route: { cluster: web_cluster_02 }
           http_filters:
           - name: envoy.filters.http.router
   clusters:
-  - name: local_cluster
+  - name: web_cluster_01
     connect_timeout: 0.25s
     type: STATIC
     lb_policy: ROUND_ROBIN
     load_assignment:
-      cluster_name: local_cluster
+      cluster_name: web_cluster_01
       endpoints:
       - lb_endpoints:
         - endpoint:
             address:
-              socket_address: { address: 172.31.5.11, port_value: 8080 }
+              socket_address: { address: 172.31.6.11, port_value: 80 }
+
+  - name: web_cluster_02
+    connect_timeout: 0.25s
+    type: STATIC
+    lb_policy: ROUND_ROBIN
+    load_assignment:
+      cluster_name: web_cluster_02
+      endpoints:
+      - lb_endpoints:
         - endpoint:
             address:
-              socket_address: { address: 172.31.5.12, port_value: 8080 }
+              socket_address: { address: 172.31.6.12, port_value: 80 }
