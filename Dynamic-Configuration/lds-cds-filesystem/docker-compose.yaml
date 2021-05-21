@@ -5,59 +5,61 @@ services:
     image: envoyproxy/envoy-alpine:v1.18-latest
     volumes:
     - ./front-envoy.yaml:/etc/envoy/envoy.yaml
-    - ./eds.conf.d/:/etc/envoy/eds.conf.d/
+    - ./conf.d/:/etc/envoy/conf.d/
     networks:
       envoymesh:
-        ipv4_address: 172.31.11.2
+        ipv4_address: 172.31.12.2
         aliases:
         - front-proxy
     depends_on:
-    - webserver01-sidecar
-    - webserver02-sidecar
+    - webserver01
+    - webserver01-app
+    - webserver02
+    - webserver02-app
 
-  webserver01-sidecar:
+  webserver01:
     image: envoyproxy/envoy-alpine:v1.18-latest
     volumes:
     - ./envoy-sidecar-proxy.yaml:/etc/envoy/envoy.yaml
     hostname: webserver01
     networks:
       envoymesh:
-        ipv4_address: 172.31.11.11
+        ipv4_address: 172.31.12.11
         aliases:
         - webserver01-sidecar
 
-  webserver01:
+  webserver01-app:
     image: ikubernetes/demoapp:v1.0
     environment:
       - PORT=8080
       - HOST=127.0.0.1
-    network_mode: "service:webserver01-sidecar"
+    network_mode: "service:webserver01"
     depends_on:
-    - webserver01-sidecar
+    - webserver01
 
-  webserver02-sidecar:
+  webserver02:
     image: envoyproxy/envoy-alpine:v1.18-latest
     volumes:
     - ./envoy-sidecar-proxy.yaml:/etc/envoy/envoy.yaml
     hostname: webserver02
     networks:
       envoymesh:
-        ipv4_address: 172.31.11.12
+        ipv4_address: 172.31.12.12
         aliases:
         - webserver02-sidecar
 
-  webserver02:
+  webserver02-app:
     image: ikubernetes/demoapp:v1.0
     environment:
       - PORT=8080
       - HOST=127.0.0.1
-    network_mode: "service:webserver02-sidecar"
+    network_mode: "service:webserver02"
     depends_on:
-    - webserver02-sidecar
+    - webserver02
 
 networks:
   envoymesh:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.31.11.0/24
+        - subnet: 172.31.12.0/24

@@ -16,6 +16,9 @@ docker-compose up
 ```
 front_proxy_ip=$(docker container inspect --format '{{ $network := index .NetworkSettings.Networks "cluster-static-dns-discovery_envoymesh" }}{{ $network.IPAddress}}' cluster-static-dns-discovery_envoy_1)
 curl http://${front_proxy_ip}
+
+可以通过admin interface了解集群的相关状态，尤其是获取的各endpoint的相关信息
+curl http://${front_proxy_ip}/clusters
 ```
 
 3. 停止后清理
