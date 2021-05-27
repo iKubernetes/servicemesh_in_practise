@@ -1,3 +1,7 @@
+# Author: MageEdu <mage@magedu.com>
+# Version: v1.0.2
+# Site: www.magedu.com
+#
 admin:
   profile_path: /tmp/envoy.prof
   access_log_path: /tmp/admin_access.log
@@ -5,6 +9,15 @@ admin:
     socket_address:
        address: 0.0.0.0
        port_value: 9901
+
+layered_runtime:
+  layers:
+  - name: static_layer_0
+    static_layer:
+      health_check:
+        min_interval: 5
+  - name: admin_layer_0
+    admin_layer: {}
 
 static_resources:
   listeners:
@@ -45,7 +58,7 @@ static_resources:
       - lb_endpoints:
         - endpoint:
             address:
-              socket_address: { address: 172.31.5.11, port_value: 8080 }
+              socket_address: { address: 172.31.14.11, port_value: 8080 }
         - endpoint:
             address:
-              socket_address: { address: 172.31.5.12, port_value: 8080 }
+              socket_address: { address: 172.31.14.12, port_value: 8080 }
