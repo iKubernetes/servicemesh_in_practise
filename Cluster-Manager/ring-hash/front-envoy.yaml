@@ -23,7 +23,13 @@ static_resources:
               domains: ["*"]
               routes:
               - match: { prefix: "/" }
-                route: { cluster: web_cluster_01 }
+                route:
+                  cluster: web_cluster_01
+                  hash_policy:
+                  # - connection_properties:
+                  #     source_ip: true
+                  - header:
+                      header_name: User-Agent
           http_filters:
           - name: envoy.filters.http.router
 
