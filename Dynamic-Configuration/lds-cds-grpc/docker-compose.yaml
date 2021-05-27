@@ -1,51 +1,76 @@
 version: '3.3'
+
 services:
   envoy:
-    build:
-      context: .
-      dockerfile: Dockerfile-envoy
+    image: envoyproxy/envoy-alpine:v1.18-latest
+    volumes:
+    - ./front-envoy.yaml:/etc/envoy/envoy.yaml
     networks:
       envoymesh:
+        ipv4_address: 172.31.15.2
         aliases:
-        - envoy
-    expose:
-    - "80"
-    - "9901"
+        - front-proxy
     depends_on:
-    - "xdsserver"
+    - webserver01
+    - webserver02
+    - xdsserver
 
-  webserver1:
-    image: ikubernetes/mini-http-server:v0.3
+  webserver01:
+    image: ikubernetes/demoapp:v1.0
+    environment:
+      - PORT=8080
+      - HOST=127.0.0.1
+    hostname: webserver01
     networks:
       envoymesh:
-        aliases:
-        - webserver1
-    expose:
-    - "8081"
-    depends_on:
-    - "envoy"
+        ipv4_address: 172.31.15.11
 
-  webserver2:
-    image: ikubernetes/mini-http-server:v0.3
+  webserver01-sidecar:
+    image: envoyproxy/envoy-alpine:v1.18-latest
+    volumes:
+    - ./envoy-sidecar-proxy.yaml:/etc/envoy/envoy.yaml
+    network_mode: "service:webserver01"
+    depends_on:
+    - webserver01
+
+  webserver02:
+    image: ikubernetes/demoapp:v1.0
+    environment:
+      - PORT=8080
+      - HOST=127.0.0.1
+    hostname: webserver02
     networks:
       envoymesh:
-        aliases:
-        - webserver2
-    expose:
-    - "8081"
+        ipv4_address: 172.31.15.12
+
+  webserver02-sidecar:
+    image: envoyproxy/envoy-alpine:v1.18-latest
+    volumes:
+    - ./envoy-sidecar-proxy.yaml:/etc/envoy/envoy.yaml
+    network_mode: "service:webserver02"
     depends_on:
-    - "envoy"
+    - webserver02
 
   xdsserver:
-    image: ikubernetes/sxds
+    image: ikubernetes/envoy-xds-server:v0.1
+    environment:
+      - SERVER_PORT=18000
+      - NODE_ID=envoy_front_proxy
+      - RESOURCES_FILE=/etc/envoy-xds-server/config/config.yaml
+    volumes:
+    - ./resources:/etc/envoy-xds-server/config/
     networks:
       envoymesh:
+        ipv4_address: 172.31.15.5
         aliases:
         - xdsserver
         - xds-service
     expose:
-    - "8081"
-    - "8082"
+    - "18000"
 
 networks:
-  envoymesh: {}
+  envoymesh:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.15.0/24
