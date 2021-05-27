@@ -1,52 +1,86 @@
-version: '3'
+# Author: MageEdu <mage@magedu.com>
+# Version: v1.0.1
+# Site: www.magedu.com
+#
+version: '3.3'
 
 services:
-  front-envoy:
-    image: envoyproxy/envoy-alpine:v1.11.1
+  envoy:
+    image: envoyproxy/envoy-alpine:v1.18-latest
     volumes:
-      - ./front-envoy.yaml:/etc/envoy/envoy.yaml
-    networks:
-      - envoymesh
-    expose:
-      # Expose ports 80 (for general traffic) and 9901 (for the admin server)
-      - "80"
-      - "9901"
-
-  service_blue:
-    image: ikubernetes/servicemesh-app:v0.3
+    - ./front-envoy.yaml:/etc/envoy/envoy.yaml
     networks:
       envoymesh:
+        ipv4_address: 172.31.20.2
         aliases:
-          - service_blue
-          - myservice
-    environment:
-      - SERVICE_NAME=blue
-    expose:
-      - "80"
+        - front-proxy
+    depends_on:
+    - webserver01-sidecar
+    - webserver02-sidecar
 
-  service_green:
-    image: ikubernetes/servicemesh-app:v0.3
+  webserver01-sidecar:
+    image: envoyproxy/envoy-alpine:v1.18-latest
+    volumes:
+    - ./envoy-sidecar-proxy.yaml:/etc/envoy/envoy.yaml
+    hostname: red
     networks:
       envoymesh:
+        ipv4_address: 172.31.20.11
         aliases:
-          - service_green
-          - myservice
-    environment:
-      - SERVICE_NAME=green
-    expose:
-      - "80"
+        - myservice
 
-  service_red:
-    image: ikubernetes/servicemesh-app:v0.3
+  webserver01:
+    image: ikubernetes/demoapp:v1.0
+    environment:
+      - PORT=8080
+      - HOST=127.0.0.1
+    network_mode: "service:webserver01-sidecar"
+    depends_on:
+    - webserver01-sidecar
+
+  webserver02-sidecar:
+    image: envoyproxy/envoy-alpine:v1.18-latest
+    volumes:
+    - ./envoy-sidecar-proxy.yaml:/etc/envoy/envoy.yaml
+    hostname: blue
     networks:
       envoymesh:
+        ipv4_address: 172.31.20.12
         aliases:
-          - service_red
-          - myservice
+        - myservice
+
+  webserver02:
+    image: ikubernetes/demoapp:v1.0
     environment:
-      - SERVICE_NAME=red
-    expose:
-      - "80"
+      - PORT=8080
+      - HOST=127.0.0.1
+    network_mode: "service:webserver02-sidecar"
+    depends_on:
+    - webserver02-sidecar
+
+  webserver03-sidecar:
+    image: envoyproxy/envoy-alpine:v1.18-latest
+    volumes:
+    - ./envoy-sidecar-proxy.yaml:/etc/envoy/envoy.yaml
+    hostname: green
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.20.13
+        aliases:
+        - myservice
+
+  webserver03:
+    image: ikubernetes/demoapp:v1.0
+    environment:
+      - PORT=8080
+      - HOST=127.0.0.1
+    network_mode: "service:webserver03-sidecar"
+    depends_on:
+    - webserver03-sidecar
 
 networks:
-  envoymesh: {}
+  envoymesh:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.20.0/24

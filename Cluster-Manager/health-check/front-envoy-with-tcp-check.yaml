@@ -38,7 +38,9 @@ static_resources:
         - endpoint:
             address:
               socket_address: { address: myservice, port_value: 80 }
-    outlier_detection:
-      consecutive_5xx: 3
-      base_ejection_time: 10s
-      max_ejection_percent: 10
+    health_checks:
+    - timeout: 5s
+      interval: 10s
+      unhealthy_threshold: 2
+      healthy_threshold: 2
+      tcp_health_check: {}
