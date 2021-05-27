@@ -17,6 +17,7 @@ services:
     depends_on:
     - webserver01-sidecar
     - webserver02-sidecar
+    - webserver03-sidecar
 
   webserver01-sidecar:
     image: envoyproxy/envoy-alpine:v1.18-latest
