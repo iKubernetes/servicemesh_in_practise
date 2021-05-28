@@ -31,7 +31,7 @@ static_resources:
   - name: web_cluster_01
     connect_timeout: 0.25s
     type: STRICT_DNS
-    lb_policy: ROUND_ROBIN
+    lb_policy: LEAST_REQUEST
     load_assignment:
       cluster_name: web_cluster_01
       endpoints:
