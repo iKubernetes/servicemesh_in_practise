@@ -24,10 +24,6 @@ docker-compose up
 ```
 # 通过send-requests.sh脚本进行webcluster1的请求测试，可发现，有部分请求的响应码为5xx，这其实就是被熔断的处理结果；
 ./send-requests.sh http://172.31.35.2/ 300
-
-
-# 通过send-requests.sh脚本进行webcluster2的请求测试，可发现，有部分请求的响应码为5xx，这其实就是被熔断的处理结果；
-./send-requests.sh http://172.31.35.2/livez 300
 ```
 
 3. 停止后清理

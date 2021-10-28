@@ -11,6 +11,7 @@ services:
       # Expose ports 80 (for general traffic) and 9901 (for the admin server)
       - "80"
       - "9901"
+
   webserver01-sidecar:
     image: envoyproxy/envoy-alpine:v1.18-latest
     volumes:
