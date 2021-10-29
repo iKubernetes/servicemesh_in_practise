@@ -2,75 +2,70 @@ version: '3'
 
 services:
   front-envoy:
-    image: envoyproxy/envoy-alpine:v1.11.2
+    image: envoyproxy/envoy-alpine:v1.20.0
     volumes:
       - ./front-envoy.yaml:/etc/envoy/envoy.yaml
     networks:
-      - envoymesh
+      envoymesh:
+        ipv4_address: 172.31.60.10
     expose:
       # Expose ports 80 (for general traffic) and 9901 (for the admin server)
       - "80"
       - "9901"
 
-  ver151:
-    image: ikubernetes/servicemesh-app:latest
+  demoapp-v1.0-1:
+    image: ikubernetes/demoapp:v1.0
+    hostname: demoapp-v1.0-1
     networks:
       envoymesh:
         aliases:
-          - version-1.5
-          - myapp-v1.5
-    environment:
-      - SERVICE_NAME=myapp-v1.5-1
+          - demoappv10
     expose:
-      - "80"
-
-  ver152:
-    image: ikubernetes/servicemesh-app:latest
+      - "80"      
+      
+  demoapp-v1.0-2:
+    image: ikubernetes/demoapp:v1.0
+    hostname: demoapp-v1.0-2
     networks:
       envoymesh:
         aliases:
-          - version-1.5
-          - myapp-v1.5
-    environment:
-      - SERVICE_NAME=myapp-v1.5-2
+          - demoappv10
     expose:
-      - "80"
-
-  ver153:
-    image: ikubernetes/servicemesh-app:latest
+      - "80"  
+      
+  demoapp-v1.0-3:
+    image: ikubernetes/demoapp:v1.0
+    hostname: demoapp-v1.0-3
     networks:
       envoymesh:
         aliases:
-          - version-1.5
-          - myapp-v1.5
-    environment:
-      - SERVICE_NAME=myapp-v1.5-3
+          - demoappv10
     expose:
-      - "80"
-
-  ver161:
-    image: ikubernetes/servicemesh-app:latest
+      - "80" 
+      
+  demoapp-v1.1-1:
+    image: ikubernetes/demoapp:v1.1
+    hostname: demoapp-v1.1-1
     networks:
       envoymesh:
         aliases:
-          - version-1.6
-          - myapp-v1.6
-    environment:
-      - SERVICE_NAME=myapp-v1.6-1
+          - demoappv11
     expose:
-      - "80"
-
-  ver162:
-    image: ikubernetes/servicemesh-app:latest
+      - "80"      
+      
+  demoapp-v1.1-2:
+    image: ikubernetes/demoapp:v1.1
+    hostname: demoapp-v1.1-2
     networks:
       envoymesh:
         aliases:
-          - version-1.6
-          - myapp-v1.6
-    environment:
-      - SERVICE_NAME=myapp-v1.6-2
+          - demoappv11
     expose:
-      - "80"
+      - "80"  
 
 networks:
-  envoymesh: {}
+  envoymesh:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.60.0/24
