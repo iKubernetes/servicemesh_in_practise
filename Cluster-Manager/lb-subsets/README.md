@@ -20,7 +20,7 @@ docker-compose up
 curl -H "x-hardware-test: memory" 172.31.33.2/hostname
 
 # 或者，我们也可以指定特殊的首部发出特定的请求，例如附带有”x-custom-version: pre-release”的请求，将会被分发至特定的子集；该子集要求标签version的值为1.2-pre，而标签stage的值为dev；该子集有e7一个端点;
-curl -H "x-custome-version: pre-release" 172.31.33.2/hostname
+curl -H "x-custom-version: pre-release" 172.31.33.2/hostname
 ```
 
 3. 停止后清理
