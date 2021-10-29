@@ -36,11 +36,11 @@ static_resources:
                   weighted_clusters:
                     clusters:
                     - name: demoappv10
-                      weight: 90
+                      weight: 100
                     - name: demoappv11
-                      weight: 10
+                      weight: 0
                     total_weight: 100
-                    runtime_key_prefix: routing.traffic_split
+                    runtime_key_prefix: routing.traffic_split.demoapp
           http_filters:
           - name: envoy.filters.http.router
 
