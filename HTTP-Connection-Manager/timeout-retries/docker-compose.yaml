@@ -1,12 +1,15 @@
-version: '3'
+version: '3.3'
 
 services:
-  front-envoy:
-    image: envoyproxy/envoy-alpine:v1.11.2
+  envoy:
+    image: envoyproxy/envoy-alpine:v1.20.0
     volumes:
-      - ./front-envoy.yaml:/etc/envoy/envoy.yaml
+    - ./front-envoy.yaml:/etc/envoy/envoy.yaml
     networks:
-      - envoymesh
+      envoymesh:
+        ipv4_address: 172.31.65.10
+        aliases:
+        - front-proxy
     expose:
       # Expose ports 80 (for general traffic) and 9901 (for the admin server)
       - "80"
@@ -18,6 +21,7 @@ services:
       - ./service-envoy-fault-injection-abort.yaml:/etc/envoy/envoy.yaml
     networks:
       envoymesh:
+        ipv4_address: 172.31.65.5
         aliases:
           - service_blue
           - colored
@@ -30,6 +34,7 @@ services:
     image: ikubernetes/servicemesh-app:latest
     networks:
       envoymesh:
+        ipv4_address: 172.31.65.6
         aliases:
           - service_green
           - colored
@@ -44,6 +49,7 @@ services:
       - ./service-envoy-fault-injection-delay.yaml:/etc/envoy/envoy.yaml
     networks:
       envoymesh:
+        ipv4_address: 172.31.65.7
         aliases:
           - service_red
           - colored
@@ -51,6 +57,10 @@ services:
       - SERVICE_NAME=red
     expose:
       - "80"
-
+    
 networks:
-  envoymesh: {}
+  envoymesh:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.65.0/24
