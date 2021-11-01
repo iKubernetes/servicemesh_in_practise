@@ -43,7 +43,7 @@ static_resources:
                 route:
                   cluster: green
               - match:
-                  prefix: "/"
+                  prefix: "/service/colors"
                 route:
                   cluster: mycluster
           http_filters:

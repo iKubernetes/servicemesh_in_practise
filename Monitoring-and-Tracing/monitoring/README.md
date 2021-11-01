@@ -1,6 +1,6 @@
 ## 使用Prometheus和Grafana监控Envoy Mesh 
 ### 架构示意图
-![setup](https://raw.githubusercontent.com/dnivra26/envoy_monitoring/master/envoy_monitoring.png)
+![setup](https://github.com/iKubernetes/servicemesh_in_practise/blob/develop/Monitoring-and-Tracing/monitoring/envoy_monitoring.png)
 
 ##### Envoy Mesh使用的网络: 172.31.70.0/24
 
@@ -53,13 +53,13 @@
 
    访问宿主机的9090端口即可打开Prometheus的表达式浏览器；
 
-   ![prometheus](https://raw.githubusercontent.com/dnivra26/envoy_monitoring/master/grafana.png)
+   ![prometheus](https://github.com/iKubernetes/servicemesh_in_practise/blob/develop/Monitoring-and-Tracing/monitoring/prometheus.png)
 
 4. 查看Grafana
 
    访问宿主机的3000端口，即可打开Grafana的控制台界面
 
-   ![grafana](https://raw.githubusercontent.com/dnivra26/envoy_monitoring/master/grafana.png)
+   ![grafana](https://github.com/iKubernetes/servicemesh_in_practise/blob/develop/Monitoring-and-Tracing/monitoring/grafana.png)
 
    
 
