@@ -107,7 +107,6 @@ chown 100.101 logs/envoy/front-envoy-access.log
 
 ```
 docker-compose down
-docker volume rm new_elasticsearch_data
 ```
 
 ## 版权声明
