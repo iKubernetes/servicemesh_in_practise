@@ -1,13 +1,17 @@
-version: '3'
+# Author: MageEdu <mage@magedu.com>
+# www.magedu.com
+version: '3.3'
 
 services:
 
   front-envoy:
-    image: envoyproxy/envoy-alpine:v1.11.2
+    image: envoyproxy/envoy-alpine:v1.20.0
     volumes:
     - "./front_envoy/envoy-config.yaml:/etc/envoy/envoy.yaml"
+    - "./logs/envoy:/logs/envoy"
     networks:
       envoymesh:
+        ipv4_address: 172.31.79.10
         aliases:
         - front-envoy
         - front
@@ -15,10 +19,11 @@ services:
     - 8080:80
     - 9901:9901
 
-  service_a_envoy:
-    image: envoyproxy/envoy-alpine:v1.11.2
+  service_a-envoy:
+    image: envoyproxy/envoy-alpine:v1.20.0
     volumes:
     - "./service_a/envoy-config.yaml:/etc/envoy/envoy.yaml"
+    - "./logs/envoy:/logs/envoy"
     networks:
       envoymesh:
         aliases:
@@ -38,10 +43,11 @@ services:
     ports:
     - 8081:8081
 
-  service_b_envoy:
-    image: envoyproxy/envoy-alpine:v1.11.2
+  service_b-envoy:
+    image: envoyproxy/envoy-alpine:v1.20.0
     volumes:
     - "./service_b/envoy-config.yaml:/etc/envoy/envoy.yaml"
+    - "./logs/envoy:/logs/envoy"
     networks:
       envoymesh:
         aliases:
@@ -60,10 +66,11 @@ services:
     ports:
     - 8082:8082
 
-  service_c_envoy:
-    image: envoyproxy/envoy-alpine:v1.11.2
+  service_c-envoy:
+    image: envoyproxy/envoy-alpine:v1.20.0
     volumes:
     - "./service_c/envoy-config.yaml:/etc/envoy/envoy.yaml"
+    - "./logs/envoy:/logs/envoy"
     networks:
       envoymesh:
         aliases:
@@ -83,9 +90,10 @@ services:
     - 8083:8083
 
   statsd_exporter:
-    image: prom/statsd-exporter:latest
+    image: prom/statsd-exporter:v0.22.3    
     networks:
       envoymesh:
+        ipv4_address: 172.31.79.20
         aliases:
         - statsd_exporter
     ports:
@@ -93,11 +101,12 @@ services:
     - 9102:9102
 
   prometheus:
-    image: prom/prometheus
+    image: prom/prometheus:v2.30.3
     volumes:
     - "./prometheus/config.yaml:/etc/prometheus.yaml"
     networks:
       envoymesh:
+        ipv4_address: 172.31.79.19
         aliases:
         - prometheus
     ports:
@@ -105,7 +114,7 @@ services:
     command: "--config.file=/etc/prometheus.yaml"
 
   grafana:
-    image: grafana/grafana
+    image: grafana/grafana:8.2.2
     volumes:
     - "./grafana/grafana.ini:/etc/grafana/grafana.ini"
     - "./grafana/datasource.yaml:/etc/grafana/provisioning/datasources/datasource.yaml"
@@ -113,48 +122,70 @@ services:
     - "./grafana/dashboard.json:/etc/grafana/provisioning/dashboards/dashboard.json"
     networks:
       envoymesh:
+        ipv4_address: 172.31.79.18
         aliases:
         - grafana
     ports:
     - 3000:3000
 
   elasticsearch:
-    image: "docker.elastic.co/elasticsearch/elasticsearch:7.4.1"
+    image: "docker.elastic.co/elasticsearch/elasticsearch:7.14.2"
     environment:
-    - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+    - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     - "discovery.type=single-node"
+    - "cluster.name=myes"
+    - "node.name=myes01"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1 
     networks:
       envoymesh:
+        ipv4_address: 172.31.79.15
         aliases:
-          - es
+        - es
+        - myes01
     ports:
     - "9200:9200"
     volumes:
     - elasticsearch_data:/usr/share/elasticsearch/data
 
   kibana:
-    image: "docker.elastic.co/kibana/kibana:7.4.1"
+    image: "docker.elastic.co/kibana/kibana:7.14.2"
+    environment:
+      ELASTICSEARCH_URL: http://myes01:9200
+      ELASTICSEARCH_HOSTS: '["http://myes01:9200"]'
     networks:
       envoymesh:
+        ipv4_address: 172.31.79.16
         aliases:
           - kibana
+          - kib
     ports:
     - "5601:5601"
 
   filebeat:
-    image: "docker.elastic.co/beats/filebeat:7.4.1"
+    image: "docker.elastic.co/beats/filebeat:7.14.2"
     networks:
       envoymesh:
+        ipv4_address: 172.31.79.17
         aliases:
           - filebeat
+          - fb
     user: root
+    command: ["--strict.perms=false"]
     volumes:
-    - ./filebeat/filebeat.yaml:/usr/share/filebeat/filebeat.yml:ro
-    - /var/lib/docker:/var/lib/docker:ro
-    - /var/run/docker.sock:/var/run/docker.sock
+    - ./filebeat/filebeat.yaml:/usr/share/filebeat/filebeat.yml
+      #- /var/lib/docker:/var/lib/docker:ro
+      #- /var/run/docker.sock:/var/run/docker.sock
+    - ./logs/envoy:/logs/envoy:ro
 
 volumes:
     elasticsearch_data:
 
 networks:
-  envoymesh: {}
+  envoymesh:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.79.0/24

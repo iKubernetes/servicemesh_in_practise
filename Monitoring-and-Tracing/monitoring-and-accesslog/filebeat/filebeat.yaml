@@ -1,21 +1,25 @@
 filebeat.inputs:
-- type: container
+- type: log
   paths: 
-    - '/var/lib/docker/containers/*/*.log'
+    - '/logs/envoy/*access.log'
 
 processors:
-- add_docker_metadata:
-    host: "unix:///var/run/docker.sock"
-
 - decode_json_fields:
     fields: ["message"]
-    target: "json"
+    target: ""
     overwrite_keys: true
 
 output.elasticsearch:
-  hosts: ["elasticsearch:9200"]
+  hosts: ["http://elasticsearch:9200"]
   indices:
-    - index: "filebeat-%{[agent.version]}-%{+yyyy.MM.dd}"
+    - index: "filebeat-%{+yyyy.MM.dd}"
+#    - index: "filebeat-%{[agent.version]}-%{+yyyy.MM.dd}"
+
+#output.console:
+#  enabled: true
+#  codec.json:
+#    pretty: true
+#    #escape_html: false
 
 logging.json: true
 logging.metrics.enabled: false
