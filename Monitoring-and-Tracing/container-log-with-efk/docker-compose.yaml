@@ -4,10 +4,8 @@ version: '3.3'
 services:
   front-envoy:
     image: envoyproxy/envoy-alpine:v1.20.0
-    container_name: front-envoy
     volumes:
     - ./front-envoy.yaml:/etc/envoy/envoy.yaml
-    - ./logs/envoy:/logs/envoy
     networks:
       envoymesh:
         ipv4_address: 172.31.76.10
@@ -102,9 +100,8 @@ services:
     command: ["--strict.perms=false"]
     volumes:
     - ./filebeat/filebeat.yaml:/usr/share/filebeat/filebeat.yml
-      #- /var/lib/docker:/var/lib/docker:ro
-      #- /var/run/docker.sock:/var/run/docker.sock
-    - ./logs/envoy:/logs/envoy:ro
+    - /var/lib/docker:/var/lib/docker:ro
+    - /var/run/docker.sock:/var/run/docker.sock
 
 volumes:
     elasticsearch_data:
