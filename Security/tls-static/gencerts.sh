@@ -87,5 +87,5 @@ rm $CERT_DIR/index*
 rm $CERT_DIR/100*
 rm $CERT_DIR/serial*
 for CERT in $CERT_DIR/*; do
-    [ -d $CERT ] && rm $CERT/*.csr
+    [ -d $CERT ] && rm -f $CERT/*.csr
 done
