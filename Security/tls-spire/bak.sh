@@ -40,18 +40,17 @@ echo "${nn}"
 echo "${bb}Creating registration entry for the front-envoy ...${nn}"
 docker-compose exec spire-server bin/spire-server entry create \
 	-selector unix:user:root \
-	-spiffeID spiffe://ilinux.io/front-envoy \
-	-parentID spiffe://ilinux.io/spire/agent/x509pop/${front_envoy_fingerprint}
+	-spiffeID spiffe://magedu.com/front-envoy \
+	-parentID spiffe://magedu.com/spire/agent/x509pop/${front_envoy_fingerprint}
 
 echo "${bb}Creating registration entry for the service-gray ...${nn}"
 docker-compose exec spire-server bin/spire-server entry create \
 	-selector unix:user:root \
-	-spiffeID spiffe://ilinux.io/service-gray \
-	-parentID spiffe://ilinux.io/spire/agent/x509pop/${service_gray_fingerprint}
+	-spiffeID spiffe://magedu.com/service-gray \
+	-parentID spiffe://magedu.com/spire/agent/x509pop/${service_gray_fingerprint}
 
 echo "${bb}Creating registration entry for the service-purple ...${nn}"
 docker-compose exec spire-server bin/spire-server entry create \
 	-selector unix:user:root \
-	-spiffeID spiffe://ilinux.io/service-purple \
-	-parentID spiffe://ilinux.io/spire/agent/x509pop/${service_purple_fingerprint}
-
+	-spiffeID spiffe://magedu.com/service-purple \
+	-parentID spiffe://magedu.com/spire/agent/x509pop/${service_purple_fingerprint}

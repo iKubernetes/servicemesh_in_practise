@@ -1,6 +1,6 @@
-FROM ikubernetes/spire-agent:unstable as spire
+FROM ikubernetes/spire-agent:1.1.0 as spire
 
-FROM envoyproxy/envoy-alpine:v1.11.2
+FROM envoyproxy/envoy-alpine:v1.20.0
 RUN mkdir -p /opt/spire/conf/agent
 RUN mkdir -p /opt/spire/data/agent
 COPY --from=spire /opt/spire/bin/spire-agent /opt/spire/bin/spire-agent

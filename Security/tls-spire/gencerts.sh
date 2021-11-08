@@ -13,7 +13,7 @@ EOF
     exit 1
 }
 
-BASE_DOMAIN=ilinux.io
+BASE_DOMAIN=magedu.com
 
 if [ -z $BASE_DOMAIN ]; then
     usage
@@ -92,5 +92,5 @@ rm $CERT_DIR/index*
 rm $CERT_DIR/100*
 rm $CERT_DIR/serial*
 for CERT in $CERT_DIR/*; do
-    [ -d $CERT ] && rm $CERT/*.csr
+    [ -d $CERT ] && rm -f $CERT/*.csr
 done

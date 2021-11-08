@@ -1,4 +1,4 @@
-FROM ikubernetes/spire-agent:unstable as spire
+FROM ikubernetes/spire-agent:1.1.0 as spire
 
 FROM ikubernetes/servicemesh-app:latest
 RUN mkdir -p /opt/spire/conf/agent

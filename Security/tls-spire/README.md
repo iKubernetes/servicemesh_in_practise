@@ -1,22 +1,41 @@
 ## Running the Example
 
-### Step 1: Install Docker
 
-Ensure that you have recent versions of `docker` and `docker-compose` installed.
 
-### Step 2: Generate Certificates
+docker-compose up --build
 
-```bash
-$ ./gencerts.sh
+
+
+./1-start-spire-agents.sh
+
+./2-create-registration-entries.sh
+
+
+
+
+
+
+
+## 重新生成证书
+
+运行脚本，并依次键入如下字符串
+
+- front-envoy envoy_server_cert
+- front-envoy spire_agent
+- service-gray spire_agent
+- service-purple spire_agent
+
+
+
+为各组件复制必要的证书文件
+
 ```
-enter hostname and certificate extensions
-- envoy_server_cert for server,
-- envoy_client_cert for client, 
-- and spire_agent for spire agent.
+# 为Spire Server提供各agent所信任的CA的证书
+$ cp certs/CA/ca.crt spire-server/conf/
 
-### Step 3: Start containers
-
-```bash
-$ docker-compose up --build -d
-$ docker-compose ps
+# 为front-envoy、service-gray和service-purple提供由其信任的CA签署的agent证书
+$ cp certs/front-envoy/agent.key certs/front-envoy/agent.crt front-envoy/
+$ cp certs/service-gray/agent.key certs/service-gray/agent.crt service-gray/
+$ cp certs/service-purple/agent.key certs/service-purple/agent.crt service-purple/
 ```
+
