@@ -188,16 +188,6 @@ static_resources:
       typed_config:
         "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
         common_tls_context:
-          tls_certificate_sds_secret_configs:
-            - name: "spiffe://magedu.com/front-envoy"
-              sds_config:
-                api_config_source:
-                  api_type: GRPC
-                  grpc_services:
-                    envoy_grpc:
-                      cluster_name: spire_agent
-                  transport_api_version: V3
-                resource_api_version: V3
           combined_validation_context:
             # validate the SPIFFE ID of the server (recommended)
             default_validation_context:
