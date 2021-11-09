@@ -54,7 +54,7 @@
    * Connection #0 to host 172.31.88.10 left intact
    ```
 
-   Jaeger会记录到该请求相关的Trace。
+   Jaeger会记录到该请求相关的Trace。访问宿主机的16686端口，即可通过浏览器访问Jaeger UI。
 
    ![Jaeger-Tracing-basics](images/jaeger-tracing-001.png)
 
