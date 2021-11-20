@@ -1,0 +1,19 @@
+version: '3.3'
+
+services:
+  envoy:
+    image: envoyproxy/envoy-alpine:v1.20.0
+    volumes:
+    - ./envoy.yaml:/etc/envoy/envoy.yaml
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.4.2
+        aliases:
+        - envoy-echo
+
+networks:
+  envoymesh:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.4.0/24

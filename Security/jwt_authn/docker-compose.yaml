@@ -1,0 +1,75 @@
+version: '3.3'
+
+services:
+  front-envoy:
+    image: envoyproxy/envoy-alpine:v1.20.0
+    volumes:
+    - ./front-envoy.yaml:/etc/envoy/envoy.yaml
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.100.10
+        aliases:
+        - front-envoy
+    expose:
+      # Expose ports 80 (for general traffic) and 9901 (for the admin server)
+      - "80"
+      - "9901"
+    ports:
+      - "8080:80"
+
+
+  demoapp:
+    image: ikubernetes/demoapp:v1.0
+    hostname: "upstream-demoapp"
+    environment:
+    - "PORT=8080"
+    networks:
+      envoymesh:
+        aliases:
+        - upstream-demoapp
+    expose:
+    - "8080"
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:15.0.2
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.100.66
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: magedu.com
+      DB_VENDOR: postgres
+      DB_ADDR: postgres
+      DB_DATABASE: keycloak
+      DB_USER: kcadmin
+      DB_PASSWORD: kcpass
+    ports:
+      - "8081:8080"
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:13.4-alpine
+    restart: unless-stopped
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.100.67
+        aliases:
+        - db
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: kcadmin
+      POSTGRES_PASSWORD: kcpass
+    volumes:
+    - "postgres_data:/var/lib/postgresql/data"
+
+networks:
+  envoymesh:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.100.0/24
+
+volumes:
+  postgres_data:
+    driver: local
