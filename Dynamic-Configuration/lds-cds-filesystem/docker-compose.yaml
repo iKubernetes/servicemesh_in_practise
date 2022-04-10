@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   envoy:
-    image: envoyproxy/envoy-alpine:v1.18-latest
+    image: envoyproxy/envoy-alpine:v1.21-latest
     volumes:
     - ./front-envoy.yaml:/etc/envoy/envoy.yaml
     - ./conf.d/:/etc/envoy/conf.d/
@@ -18,7 +18,7 @@ services:
     - webserver02-app
 
   webserver01:
-    image: envoyproxy/envoy-alpine:v1.18-latest
+    image: envoyproxy/envoy-alpine:v1.21-latest
     volumes:
     - ./envoy-sidecar-proxy.yaml:/etc/envoy/envoy.yaml
     hostname: webserver01
@@ -38,7 +38,7 @@ services:
     - webserver01
 
   webserver02:
-    image: envoyproxy/envoy-alpine:v1.18-latest
+    image: envoyproxy/envoy-alpine:v1.21-latest
     volumes:
     - ./envoy-sidecar-proxy.yaml:/etc/envoy/envoy.yaml
     hostname: webserver02
