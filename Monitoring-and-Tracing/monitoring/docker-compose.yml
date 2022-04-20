@@ -5,7 +5,10 @@ version: '3.3'
 services:
 
   front-envoy:
-    image: envoyproxy/envoy-alpine:v1.20.0
+    image: envoyproxy/envoy-alpine:v1.21-latest
+    environment:
+      - ENVOY_UID=0
+      - ENVOY_GID=0
     volumes:
     - "./front_envoy/envoy-config.yaml:/etc/envoy/envoy.yaml"
     networks:
