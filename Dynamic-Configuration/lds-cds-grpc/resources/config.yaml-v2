@@ -13,6 +13,6 @@ spec:
   - name: webcluster
     endpoints:
     - address: 172.31.15.11
-      port: 8080
+      port: 80
     - address: 172.31.15.12
-      port: 8080
+      port: 80

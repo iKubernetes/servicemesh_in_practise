@@ -11,9 +11,9 @@ resources:
           address:
             socket_address:
               address: webserver01
-              port_value: 8080
+              port_value: 80
       - endpoint:
           address:
             socket_address:
               address: webserver02
-              port_value: 8080
+              port_value: 80
