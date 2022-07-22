@@ -1,13 +1,17 @@
+# Author: MageEdu <mage@magedu.com>
+# Site: www.magedu.com
 version: '3.3'
 
 services:
   envoy:
-    image: envoyproxy/envoy-alpine:v1.18-latest
+    #image: envoyproxy/envoy-alpine:v1.21-latest
+    image: envoyproxy/envoy:v1.23-latest
     volumes:
     - ./front-envoy.yaml:/etc/envoy/envoy.yaml
+    - ./certs/:/etc/envoy/certs/
     networks:
       envoymesh:
-        ipv4_address: 172.31.6.2
+        ipv4_address: 172.31.7.2
         aliases:
         - front-proxy
     depends_on:
@@ -15,13 +19,13 @@ services:
     - webserver02-sidecar
 
   webserver01-sidecar:
-    image: envoyproxy/envoy-alpine:v1.18-latest
+    image: envoyproxy/envoy:v1.23-latest
     volumes:
     - ./envoy-sidecar-proxy.yaml:/etc/envoy/envoy.yaml
     hostname: webserver01
     networks:
       envoymesh:
-        ipv4_address: 172.31.6.11
+        ipv4_address: 172.31.7.11
         aliases:
         - webserver01-sidecar
 
@@ -35,13 +39,13 @@ services:
     - webserver01-sidecar
 
   webserver02-sidecar:
-    image: envoyproxy/envoy-alpine:v1.18-latest
+    image: envoyproxy/envoy:v1.23-latest
     volumes:
     - ./envoy-sidecar-proxy.yaml:/etc/envoy/envoy.yaml
     hostname: webserver02
     networks:
       envoymesh:
-        ipv4_address: 172.31.6.12
+        ipv4_address: 172.31.7.12
         aliases:
         - webserver02-sidecar
 
@@ -59,4 +63,4 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.31.6.0/24
+        - subnet: 172.31.7.0/24

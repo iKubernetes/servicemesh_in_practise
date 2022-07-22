@@ -1,3 +1,5 @@
+# Author: MageEdu <mage@magedu.com>
+# Site: www.magedu.com
 admin:
   profile_path: /tmp/envoy.prof
   access_log_path: /tmp/admin_access.log
@@ -21,39 +23,25 @@ static_resources:
           route_config:
             name: local_route
             virtual_hosts:
-            - name: web_service_01
-              domains: ["*.magedu.com", "magedu.com"]
-              routes:
-              - match: { prefix: "/" }
-                route: { cluster: web_cluster_01 }
-            - name: web_service_02
+            - name: local_service 
               domains: ["*"]
               routes:
               - match: { prefix: "/" }
-                route: { cluster: web_cluster_02 }
+                route: { cluster: local_cluster }
           http_filters:
           - name: envoy.filters.http.router
-  clusters:
-  - name: web_cluster_01
-    connect_timeout: 0.25s
-    type: STATIC
-    lb_policy: ROUND_ROBIN
-    load_assignment:
-      cluster_name: web_cluster_01
-      endpoints:
-      - lb_endpoints:
-        - endpoint:
-            address:
-              socket_address: { address: 172.31.6.11, port_value: 80 }
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
 
-  - name: web_cluster_02
+  clusters:
+  - name: local_cluster
     connect_timeout: 0.25s
     type: STATIC
     lb_policy: ROUND_ROBIN
     load_assignment:
-      cluster_name: web_cluster_02
+      cluster_name: local_cluster
       endpoints:
       - lb_endpoints:
         - endpoint:
             address:
-              socket_address: { address: 172.31.6.12, port_value: 80 }
+              socket_address: { address: 127.0.0.1, port_value: 8080 }
