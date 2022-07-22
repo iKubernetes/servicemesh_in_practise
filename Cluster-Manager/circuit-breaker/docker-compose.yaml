@@ -2,7 +2,8 @@ version: '3'
 
 services:
   front-envoy:
-    image: envoyproxy/envoy-alpine:v1.21-latest
+    #image: envoyproxy/envoy-alpine:v1.21-latest
+    image: envoyproxy/envoy:v1.23-latest
     volumes:
       - ./front-envoy.yaml:/etc/envoy/envoy.yaml
     networks:
@@ -13,7 +14,7 @@ services:
       - "9901"
 
   webserver01-sidecar:
-    image: envoyproxy/envoy-alpine:v1.21-latest
+    image: envoyproxy/envoy:v1.23-latest
     volumes:
     - ./envoy-sidecar-proxy.yaml:/etc/envoy/envoy.yaml
     hostname: red
@@ -34,7 +35,7 @@ services:
     - webserver01-sidecar
 
   webserver02-sidecar:
-    image: envoyproxy/envoy-alpine:v1.21-latest
+    image: envoyproxy/envoy:v1.23-latest
     volumes:
     - ./envoy-sidecar-proxy.yaml:/etc/envoy/envoy.yaml
     hostname: blue
@@ -55,7 +56,7 @@ services:
     - webserver02-sidecar
 
   webserver03-sidecar:
-    image: envoyproxy/envoy-alpine:v1.21-latest
+    image: envoyproxy/envoy:v1.23-latest
     volumes:
     - ./envoy-sidecar-proxy.yaml:/etc/envoy/envoy.yaml
     hostname: green
@@ -76,7 +77,7 @@ services:
     - webserver03-sidecar
 
   webserver04-sidecar:
-    image: envoyproxy/envoy-alpine:v1.21-latest
+    image: envoyproxy/envoy:v1.23-latest
     volumes:
     - ./envoy-sidecar-proxy.yaml:/etc/envoy/envoy.yaml
     hostname: gray
@@ -97,7 +98,7 @@ services:
     - webserver04-sidecar
 
   webserver05-sidecar:
-    image: envoyproxy/envoy-alpine:v1.21-latest
+    image: envoyproxy/envoy:v1.23-latest
     volumes:
     - ./envoy-sidecar-proxy.yaml:/etc/envoy/envoy.yaml
     hostname: black
