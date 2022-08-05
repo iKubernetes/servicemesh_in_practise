@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   envoy:
-    image: envoyproxy/envoy-alpine:v1.21-latest
+    image: envoyproxy/envoy:v1.23-latest
     environment:
       - ENVOY_UID=0
       - ENVOY_GID=0
@@ -64,7 +64,7 @@ services:
       - "80"
 
   statsd_exporter:
-    image: prom/statsd-exporter:v0.22.3
+    image: prom/statsd-exporter:v0.22.7
     networks:
       envoymesh:
         ipv4_address: 172.31.68.6
@@ -75,7 +75,7 @@ services:
     - 9102:9102
 
   prometheus:
-    image: prom/prometheus:v2.30.3
+    image: prom/prometheus:v2.37.0
     volumes:
     - "./prometheus/config.yaml:/etc/prometheus.yaml"
     networks:
@@ -88,7 +88,7 @@ services:
     command: "--config.file=/etc/prometheus.yaml"
 
   grafana:
-    image: grafana/grafana:8.2.2
+    image: grafana/grafana:9.0.6
     volumes:
     - "./grafana/grafana.ini:/etc/grafana/grafana.ini"
     - "./grafana/datasource.yaml:/etc/grafana/provisioning/datasources/datasource.yaml"

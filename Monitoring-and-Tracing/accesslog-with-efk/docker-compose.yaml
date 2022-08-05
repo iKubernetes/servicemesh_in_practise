@@ -3,7 +3,7 @@ version: '3.3'
 
 services:
   front-envoy:
-    image: envoyproxy/envoy-alpine:v1.21-latest
+    image: envoyproxy/envoy:v1.23-latest
     environment:
       - ENVOY_UID=0
       - ENVOY_GID=0
@@ -58,7 +58,7 @@ services:
       - "80"
 
   elasticsearch:
-    image: "docker.elastic.co/elasticsearch/elasticsearch:7.14.2"
+    image: "docker.elastic.co/elasticsearch/elasticsearch:7.17.5"
     environment:
     - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
     - "discovery.type=single-node"
@@ -76,11 +76,11 @@ services:
         - myes01
     ports:
     - "9200:9200"
-    volumes:
-    - elasticsearch_data:/usr/share/elasticsearch/data
+    #volumes:
+    #- elasticsearch_data:/usr/share/elasticsearch/data
 
   kibana:
-    image: "docker.elastic.co/kibana/kibana:7.14.2"
+    image: "docker.elastic.co/kibana/kibana:7.17.5"
     environment:
       ELASTICSEARCH_URL: http://myes01:9200
       ELASTICSEARCH_HOSTS: '["http://myes01:9200"]'
@@ -94,7 +94,7 @@ services:
     - "5601:5601"
 
   filebeat:
-    image: "docker.elastic.co/beats/filebeat:7.14.2"
+    image: "docker.elastic.co/beats/filebeat:7.17.5"
     networks:
       envoymesh:
         ipv4_address: 172.31.76.17

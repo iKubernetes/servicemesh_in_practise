@@ -4,7 +4,7 @@ version: '3.3'
 
 services:
   front-envoy:
-    image: envoyproxy/envoy-alpine:v1.21-latest
+    image: envoyproxy/envoy:v1.23-latest
     environment:
       - ENVOY_UID=0
       - ENVOY_GID=0
@@ -22,7 +22,7 @@ services:
     - 9901:9901
 
   service_a-envoy:
-    image: envoyproxy/envoy-alpine:v1.20.0
+    image: envoyproxy/envoy-alpine:v1.20.7
     volumes:
     - "./service_a/envoy-config.yaml:/etc/envoy/envoy.yaml"
     - "./logs/envoy:/logs/envoy"
@@ -46,7 +46,7 @@ services:
     - 8081:8081
 
   service_b-envoy:
-    image: envoyproxy/envoy-alpine:v1.20.0
+    image: envoyproxy/envoy-alpine:v1.20.7
     volumes:
     - "./service_b/envoy-config.yaml:/etc/envoy/envoy.yaml"
     - "./logs/envoy:/logs/envoy"
@@ -69,7 +69,7 @@ services:
     - 8082:8082
 
   service_c-envoy:
-    image: envoyproxy/envoy-alpine:v1.20.0
+    image: envoyproxy/envoy-alpine:v1.20.7
     volumes:
     - "./service_c/envoy-config.yaml:/etc/envoy/envoy.yaml"
     - "./logs/envoy:/logs/envoy"
@@ -92,7 +92,7 @@ services:
     - 8083:8083
 
   statsd_exporter:
-    image: prom/statsd-exporter:v0.22.3    
+    image: prom/statsd-exporter:v0.22.7    
     networks:
       envoymesh:
         ipv4_address: 172.31.79.20
@@ -103,7 +103,7 @@ services:
     - 9102:9102
 
   prometheus:
-    image: prom/prometheus:v2.30.3
+    image: prom/prometheus:v2.37.0
     volumes:
     - "./prometheus/config.yaml:/etc/prometheus.yaml"
     networks:
@@ -116,7 +116,7 @@ services:
     command: "--config.file=/etc/prometheus.yaml"
 
   grafana:
-    image: grafana/grafana:8.2.2
+    image: grafana/grafana:9.0.6
     volumes:
     - "./grafana/grafana.ini:/etc/grafana/grafana.ini"
     - "./grafana/datasource.yaml:/etc/grafana/provisioning/datasources/datasource.yaml"
@@ -131,7 +131,7 @@ services:
     - 3000:3000
 
   elasticsearch:
-    image: "docker.elastic.co/elasticsearch/elasticsearch:7.14.2"
+    image: "docker.elastic.co/elasticsearch/elasticsearch:7.17.5"
     environment:
     - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     - "discovery.type=single-node"
@@ -149,11 +149,11 @@ services:
         - myes01
     ports:
     - "9200:9200"
-    volumes:
-    - elasticsearch_data:/usr/share/elasticsearch/data
+    #volumes:
+    #- elasticsearch_data:/usr/share/elasticsearch/data
 
   kibana:
-    image: "docker.elastic.co/kibana/kibana:7.14.2"
+    image: "docker.elastic.co/kibana/kibana:7.17.5"
     environment:
       ELASTICSEARCH_URL: http://myes01:9200
       ELASTICSEARCH_HOSTS: '["http://myes01:9200"]'
@@ -167,7 +167,7 @@ services:
     - "5601:5601"
 
   filebeat:
-    image: "docker.elastic.co/beats/filebeat:7.14.2"
+    image: "docker.elastic.co/beats/filebeat:7.17.5"
     networks:
       envoymesh:
         ipv4_address: 172.31.79.17
