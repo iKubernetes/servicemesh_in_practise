@@ -6,7 +6,7 @@ version: '3'
 
 services:
   front-envoy:
-    image: envoyproxy/envoy-alpine:v1.21-latest
+    image: envoyproxy/envoy:v1.29.2
     volumes:
       - ./front-envoy.yaml:/etc/envoy/envoy.yaml
     networks:

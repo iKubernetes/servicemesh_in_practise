@@ -6,7 +6,7 @@ version: '3.3'
 
 services:
   envoy:
-    image: envoyproxy/envoy-alpine:v1.21-latest
+    image: envoyproxy/envoy:v1.29.2
     volumes:
     - ./front-envoy.yaml:/etc/envoy/envoy.yaml
     # - ./front-envoy-with-tcp-check.yaml:/etc/envoy/envoy.yaml
@@ -20,7 +20,7 @@ services:
     - webserver02-sidecar
 
   webserver01-sidecar:
-    image: envoyproxy/envoy-alpine:v1.21-latest
+    image: envoyproxy/envoy:v1.29.2
     volumes:
     - ./envoy-sidecar-proxy.yaml:/etc/envoy/envoy.yaml
     hostname: red
@@ -40,7 +40,7 @@ services:
     - webserver01-sidecar
 
   webserver02-sidecar:
-    image: envoyproxy/envoy-alpine:v1.21-latest
+    image: envoyproxy/envoy:v1.29.2
     volumes:
     - ./envoy-sidecar-proxy.yaml:/etc/envoy/envoy.yaml
     hostname: blue

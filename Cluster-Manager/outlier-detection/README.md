@@ -19,7 +19,7 @@ docker-compose up
 2. 测试
 ```
 # 持续请求服务上的特定路径/livez
-while true; do curl 172.31.20.2/livez && echo; sleep 1; done
+while true; do curl 172.31.20.2/livez && echo -e "\t" && curl 172.31.20.2; sleep 1; done
 
 # 等服务调度就绪后，另启一个终端，修改其中任何一个服务的/livez响应为非"OK"值，例如，修改第一个后端端点;
 curl -X POST -d 'livez=FAIL' http://172.31.20.11/livez
