@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   envoy:
-    image: envoyproxy/envoy-alpine:v1.21-latest
+    image: envoyproxy/envoy:v1.29.2
     environment:
       - ENVOY_UID=0
       - ENVOY_GID=0
@@ -29,7 +29,7 @@ services:
         ipv4_address: 172.31.15.11
 
   webserver01-sidecar:
-    image: envoyproxy/envoy-alpine:v1.21-latest
+    image: envoyproxy/envoy:v1.29.2
     volumes:
     - ./envoy-sidecar-proxy.yaml:/etc/envoy/envoy.yaml
     network_mode: "service:webserver01"
@@ -47,7 +47,7 @@ services:
         ipv4_address: 172.31.15.12
 
   webserver02-sidecar:
-    image: envoyproxy/envoy-alpine:v1.21-latest
+    image: envoyproxy/envoy:v1.29.2
     volumes:
     - ./envoy-sidecar-proxy.yaml:/etc/envoy/envoy.yaml
     network_mode: "service:webserver02"
@@ -55,7 +55,7 @@ services:
     - webserver02
 
   xdsserver:
-    image: ikubernetes/envoy-xds-server:v0.1
+    image: ikubernetes/envoy-xds-server:v0.2
     environment:
       - SERVER_PORT=18000
       - NODE_ID=envoy_front_proxy

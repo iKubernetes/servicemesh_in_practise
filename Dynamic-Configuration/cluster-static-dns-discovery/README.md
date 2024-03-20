@@ -18,7 +18,7 @@ front_proxy_ip=$(docker container inspect --format '{{ $network := index .Networ
 curl http://${front_proxy_ip}
 
 可以通过admin interface了解集群的相关状态，尤其是获取的各endpoint的相关信息
-curl http://${front_proxy_ip}/clusters
+curl http://${front_proxy_ip}:9901/clusters
 ```
 
 3. 停止后清理
