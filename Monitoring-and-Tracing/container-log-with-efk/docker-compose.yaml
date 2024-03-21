@@ -3,7 +3,7 @@ version: '3.3'
 
 services:
   front-envoy:
-    image: envoyproxy/envoy-alpine:v1.21-latest
+    image: envoyproxy/envoy:v1.29.2
     environment:
       - ENVOY_UID=0
       - ENVOY_GID=0
@@ -20,7 +20,7 @@ services:
       - "9901"
 
   service_blue:
-    image: ikubernetes/servicemesh-app:latest
+    image: ikubernetes/servicemesh-app:v1.20
     networks:
       envoymesh:
         aliases:
@@ -32,7 +32,7 @@ services:
       - "80"
 
   service_green:
-    image: ikubernetes/servicemesh-app:latest
+    image: ikubernetes/servicemesh-app:v1.20
     networks:
       envoymesh:
         aliases:
@@ -44,7 +44,7 @@ services:
       - "80"
 
   service_red:
-    image: ikubernetes/servicemesh-app:latest
+    image: ikubernetes/servicemesh-app:v1.20
     networks:
       envoymesh:
         aliases:
@@ -56,7 +56,7 @@ services:
       - "80"
 
   elasticsearch:
-    image: "docker.elastic.co/elasticsearch/elasticsearch:7.14.2"
+    image: "docker.elastic.co/elasticsearch/elasticsearch:7.17.18"
     environment:
     - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
     - "discovery.type=single-node"
@@ -78,7 +78,7 @@ services:
     - elasticsearch_data:/usr/share/elasticsearch/data
 
   kibana:
-    image: "docker.elastic.co/kibana/kibana:7.14.2"
+    image: "docker.elastic.co/kibana/kibana:7.17.18"
     environment:
       ELASTICSEARCH_URL: http://myes01:9200
       ELASTICSEARCH_HOSTS: '["http://myes01:9200"]'
@@ -92,7 +92,7 @@ services:
     - "5601:5601"
 
   filebeat:
-    image: "docker.elastic.co/beats/filebeat:7.14.2"
+    image: "docker.elastic.co/beats/filebeat:7.17.18"
     networks:
       envoymesh:
         ipv4_address: 172.31.76.17

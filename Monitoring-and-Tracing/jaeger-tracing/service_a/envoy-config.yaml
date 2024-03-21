@@ -55,6 +55,8 @@ static_resources:
                   operation: checkAvailability                  
           http_filters:
           - name: envoy.filters.http.router
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
 
   - name: service-b-svc-http-listener
     address:
@@ -93,6 +95,8 @@ static_resources:
                   operation: checkStock                  
           http_filters:
           - name: envoy.filters.http.router
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
           
   - name: service-c-svc-http-listener
     address:
@@ -131,6 +135,8 @@ static_resources:
                   operation: checkStock                  
           http_filters:
           - name: envoy.filters.http.router
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
 
   clusters:
   - name: jaeger

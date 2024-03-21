@@ -63,8 +63,9 @@ static_resources:
                   numerator: 15
                   denominator: HUNDRED
           - name: envoy.filters.http.router
-            typed_config: {}
-          
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router          
+
   clusters:
   - name: jaeger
     type: STRICT_DNS

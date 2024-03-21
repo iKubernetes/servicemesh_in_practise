@@ -42,7 +42,7 @@ services:
     - SERVICE_NAME=2
 
   zipkin:
-    image: openzipkin/zipkin:2
+    image: openzipkin/zipkin:3
     networks:
       envoymesh:
         ipv4_address: 172.31.81.15

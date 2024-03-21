@@ -56,6 +56,8 @@ static_resources:
                   cluster: service_a
           http_filters:
           - name: envoy.filters.http.router
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
 
   - name: service-b-svc-http-listener
     address:
@@ -82,6 +84,8 @@ static_resources:
                   cluster: service_b
           http_filters:
           - name: envoy.filters.http.router
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
           
   - name: service-c-svc-http-listener
     address:
@@ -108,6 +112,8 @@ static_resources:
                   cluster: service_c
           http_filters:
           - name: envoy.filters.http.router
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
 
   clusters:
   - name: statsd_exporter

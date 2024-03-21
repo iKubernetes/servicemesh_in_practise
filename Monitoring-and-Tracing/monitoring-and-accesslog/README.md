@@ -22,10 +22,10 @@
 
 ##### 特殊要求
 
-目录logs/envoy/下的日志文件front-envoy-access.log的属主需要修改为envoy容器中运行envoy进程的用户envoy，其UID和GID默认分别为100和101，否则，front-envoy进程将日志写入到该文件时，将显示为“Permission Denied.”
+目录logs/envoy/下的日志文件front-envoy-access.log的属主需要修改为envoy容器中运行envoy进程的用户envoy（其UID和GID默认均为“101”），否则，front-envoy及各service-envoy中的envoy进程将日志写入到该文件时，将显示为“Permission Denied.”。
 
 ```
-chown 100.101 logs/envoy/front-envoy-access.log
+chown 101.101 logs/envoy/front-envoy-access.log
 ```
 
 ### 运行并测试

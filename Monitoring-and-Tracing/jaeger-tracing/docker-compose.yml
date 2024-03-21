@@ -4,7 +4,7 @@ version: '3.3'
 
 services:
   front-envoy:
-    image: envoyproxy/envoy-alpine:v1.21-latest
+    image: envoyproxy/envoy:v1.29.2
     environment:
       - ENVOY_UID=0
       - ENVOY_GID=0
@@ -21,7 +21,8 @@ services:
     - 9901:9901
 
   service_a_envoy:
-    image: envoyproxy/envoy-alpine:v1.20.0
+    #image: envoyproxy/envoy-alpine:v1.20.0
+    image: envoyproxy/envoy:v1.29.2
     volumes:
     - "./service_a/envoy-config.yaml:/etc/envoy/envoy.yaml"
     networks:
@@ -43,7 +44,8 @@ services:
     - service_a_envoy
 
   service_b_envoy:
-    image: envoyproxy/envoy-alpine:v1.20.0
+    #image: envoyproxy/envoy-alpine:v1.20.0
+    image: envoyproxy/envoy:v1.29.2
     volumes:
     - "./service_b/envoy-config.yaml:/etc/envoy/envoy.yaml"
     networks:
@@ -63,7 +65,8 @@ services:
     - service_b_envoy
 
   service_c_envoy:
-    image: envoyproxy/envoy-alpine:v1.20.0
+    #image: envoyproxy/envoy-alpine:v1.20.0
+    image: envoyproxy/envoy:v1.29.2
     volumes:
     - "./service_c/envoy-config.yaml:/etc/envoy/envoy.yaml"
     networks:
@@ -83,7 +86,7 @@ services:
     - service_c_envoy
 
   jaeger:
-    image: jaegertracing/all-in-one:1.27
+    image: jaegertracing/all-in-one:1.55
     environment:
     - COLLECTOR_ZIPKIN_HOST_PORT=9411
     networks:

@@ -1,4 +1,4 @@
-FROM envoyproxy/envoy-alpine:v1.21-latest
+FROM envoyproxy/envoy:v1.29.2
 
 COPY ./front-envoy-zipkin.yaml /etc/front-envoy.yaml
 RUN chmod go+r /etc/front-envoy.yaml
