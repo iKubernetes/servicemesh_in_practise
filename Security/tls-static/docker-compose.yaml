@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   front-envoy:
-    image: envoyproxy/envoy-alpine:v1.20.0
+    image: envoyproxy/envoy:v1.29.2
     volumes:
       - ./front-envoy.yaml:/etc/envoy/envoy.yaml
       - ./certs/front-envoy/:/etc/envoy/certs/
@@ -23,7 +23,7 @@ services:
       - "9901:9901"
 
   blue:
-    image: ikubernetes/servicemesh-app:latest
+    image: ikubernetes/servicemesh-app:v1.20
     networks:
       envoymesh:
         aliases:
@@ -36,7 +36,7 @@ services:
       - "80"
 
   green:
-    image: ikubernetes/servicemesh-app:latest
+    image: ikubernetes/servicemesh-app:v1.20
     networks:
       envoymesh:
         aliases:
@@ -49,7 +49,7 @@ services:
       - "80"
 
   red:
-    image: ikubernetes/servicemesh-app:latest
+    image: ikubernetes/servicemesh-app:v1.20
     networks:
       envoymesh:
         aliases:
@@ -62,7 +62,7 @@ services:
       - "80"
 
   gray:
-    image: ikubernetes/servicemesh-app:latest
+    image: ikubernetes/servicemesh-app:v1.20
     volumes:
       - ./service-gray.yaml:/etc/envoy/envoy.yaml
       - ./certs/service-gray/:/etc/envoy/certs/
@@ -79,7 +79,7 @@ services:
       - "443"
 
   purple:
-    image: ikubernetes/servicemesh-app:latest
+    image: ikubernetes/servicemesh-app:v1.20
     volumes:
       - ./service-purple.yaml:/etc/envoy/envoy.yaml
       - ./certs/service-purple/:/etc/envoy/certs/
