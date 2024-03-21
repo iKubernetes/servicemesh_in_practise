@@ -38,7 +38,8 @@ static_resources:
                 "@type": type.googleapis.com/envoy.config.trace.v3.ZipkinConfig
                 collector_cluster: zipkin
                 collector_endpoint: "/api/v2/spans"
-                collector_endpoint_version: HTTP_JSON          
+                #shared_span_context: false
+                collector_endpoint_version: HTTP_JSON        
           route_config:
             name: service-a-svc-http-route
             virtual_hosts:
@@ -54,6 +55,8 @@ static_resources:
                   operation: checkAvailability                  
           http_filters:
           - name: envoy.filters.http.router
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
 
   - name: service-b-svc-http-listener
     address:
@@ -75,6 +78,7 @@ static_resources:
                 "@type": type.googleapis.com/envoy.config.trace.v3.ZipkinConfig
                 collector_cluster: zipkin
                 collector_endpoint: "/api/v2/spans"
+                #shared_span_context: false
                 collector_endpoint_version: HTTP_JSON          
           route_config:
             name: service-b-svc-http-route
@@ -91,6 +95,8 @@ static_resources:
                   operation: checkStock                  
           http_filters:
           - name: envoy.filters.http.router
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
           
   - name: service-c-svc-http-listener
     address:
@@ -112,7 +118,8 @@ static_resources:
                 "@type": type.googleapis.com/envoy.config.trace.v3.ZipkinConfig
                 collector_cluster: zipkin
                 collector_endpoint: "/api/v2/spans"
-                collector_endpoint_version: HTTP_JSON          
+                #shared_span_context: false
+                collector_endpoint_version: HTTP_JSON         
           route_config:
             name: service-c-svc-http-route
             virtual_hosts:
@@ -128,6 +135,8 @@ static_resources:
                   operation: checkStock                  
           http_filters:
           - name: envoy.filters.http.router
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
 
   clusters:
   - name: zipkin
