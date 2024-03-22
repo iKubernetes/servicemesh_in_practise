@@ -1,6 +1,8 @@
-FROM ikubernetes/spire-agent:1.1.0 as spire
+#FROM gcr.io/spiffe-io/spire-agent:1.5.6 as spire
+FROM ghcr.io/spiffe/spire-agent:1.9.1 as spire
 
-FROM envoyproxy/envoy-alpine:v1.20.0
+#FROM envoyproxy/envoy-alpine:v1.21-latest
+FROM ikubernetes/envoy-alpine:v1.29.2
 RUN mkdir -p /opt/spire/conf/agent
 RUN mkdir -p /opt/spire/data/agent
 COPY --from=spire /opt/spire/bin/spire-agent /opt/spire/bin/spire-agent

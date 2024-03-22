@@ -53,8 +53,9 @@ static_resources:
                   port_redirect: 443
           http_filters:
           - name: envoy.filters.http.router
-            typed_config: {}
-            
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router            
+
   - name: listener_https
     address:
       socket_address: { address: 0.0.0.0, port_value: 443 }
@@ -90,7 +91,8 @@ static_resources:
                   cluster: mycluster
           http_filters:
           - name: envoy.filters.http.router
-            typed_config: {}
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
       transport_socket:  # DownstreamTlsContext
         name: envoy.transport_sockets.tls
         typed_config:
