@@ -43,6 +43,8 @@ static_resources:
                   cluster: web_to_echo_mtls
           http_filters:
           - name: envoy.filters.http.router
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
           
   - name: web_to_echo_tls_listener
     address:
@@ -75,6 +77,8 @@ static_resources:
                   cluster: web_to_echo_tls
           http_filters:
           - name: envoy.filters.http.router
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
           
   clusters:
   - name: spire_agent
@@ -132,9 +136,9 @@ static_resources:
                       cluster_name: spire_agent
                   transport_api_version: V3
                 resource_api_version: V3
-          tls_params:
-            ecdh_curves:
-              - X25519:P-256:P-521:P-384
+          #tls_params:
+          #  ecdh_curves:
+          #    - X25519:P-256:P-521:P-384
               
   - name: web_to_echo_tls
     connect_timeout: 0.25s
@@ -169,6 +173,6 @@ static_resources:
                       cluster_name: spire_agent
                   transport_api_version: V3
                 resource_api_version: V3
-          tls_params:
-            ecdh_curves:
-              - X25519:P-256:P-521:P-384
+          #tls_params:
+          #  ecdh_curves:
+          #    - X25519:P-256:P-521:P-384

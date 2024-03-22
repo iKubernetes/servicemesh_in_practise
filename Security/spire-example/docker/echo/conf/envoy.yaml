@@ -46,6 +46,8 @@ static_resources:
                   cluster: echo_server
           http_filters:
           - name: envoy.filters.http.router
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
       transport_socket:
         name: envoy.transport_sockets.tls
         typed_config:
@@ -77,9 +79,9 @@ static_resources:
                         cluster_name: spire_agent
                     transport_api_version: V3
                   resource_api_version: V3
-            tls_params:
-              ecdh_curves:
-                - X25519:P-256:P-521:P-384
+            #tls_params:
+            #  ecdh_curves:
+            #    - X25519:P-256:P-521:P-384
                 
   - name: listener-sds-tls
     address:
@@ -115,6 +117,8 @@ static_resources:
                   cluster: echo_server
           http_filters:
           - name: envoy.filters.http.router
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
       transport_socket:
         name: envoy.transport_sockets.tls
         typed_config:
@@ -130,9 +134,9 @@ static_resources:
                       cluster_name: spire_agent
                   transport_api_version: V3
                 resource_api_version: V3
-            tls_params:
-              ecdh_curves:
-                - X25519:P-256:P-521:P-384
+            #tls_params:
+            #  ecdh_curves:
+            #    - X25519:P-256:P-521:P-384
 
   clusters:
   - name: spire_agent
