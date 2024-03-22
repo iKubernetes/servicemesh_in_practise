@@ -1,0 +1,59 @@
+version: "3"
+
+services:
+  front-envoy:
+    build:
+      context: ./front-envoy
+      dockerfile: Dockerfile-frontenvoy
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.81.10
+        aliases:
+        - front-envoy
+        - front
+    ports:
+    - "8000:8000"
+    - "9901:9901"
+
+  service1:
+    build:
+      context: ./service/
+      dockerfile: Dockerfile-service
+    volumes:
+    - ./service/service1-envoy-zipkin.yaml:/etc/service-envoy.yaml
+    networks:
+      envoymesh:
+        aliases:
+        - service1
+    environment:
+    - SERVICE_NAME=1
+
+  service2:
+    build:
+      context: ./service/
+      dockerfile: Dockerfile-service
+    volumes:
+    - ./service/service2-envoy-zipkin.yaml:/etc/service-envoy.yaml
+    networks:
+      envoymesh:
+        aliases:
+        - service2
+    environment:
+    - SERVICE_NAME=2
+
+  zipkin:
+    image: openzipkin/zipkin:3
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.81.15
+        aliases:
+        - zipkin
+    ports:
+    - "9411:9411"
+
+networks:
+  envoymesh:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.81.0/24

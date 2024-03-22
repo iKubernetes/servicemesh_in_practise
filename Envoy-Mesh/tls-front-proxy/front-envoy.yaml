@@ -1,0 +1,65 @@
+# Author: MageEdu <mage@magedu.com>
+# Site: www.magedu.com
+admin:
+  profile_path: /tmp/envoy.prof
+  access_log_path: /tmp/admin_access.log
+  address:
+    socket_address:
+       address: 0.0.0.0
+       port_value: 9901
+
+static_resources:
+  listeners:
+  - name: listener_http
+    address:
+      socket_address: { address: 0.0.0.0, port_value: 8443 }
+    filter_chains:
+    - filters:
+      - name: envoy.filters.network.http_connection_manager
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+          stat_prefix: ingress_http
+          codec_type: AUTO
+          route_config:
+            name: local_route
+            virtual_hosts:
+            - name: web_service_01
+              domains: ["*"]
+              routes:
+              - match: { prefix: "/" }
+                route: { cluster: web_cluster_01 }
+          http_filters:
+          - name: envoy.filters.http.router
+      transport_socket:
+        name: envoy.transport_sockets.tls
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.DownstreamTlsContext
+          common_tls_context:
+            tls_certificates:
+            # The following self-signed certificate pair is generated using:
+            # $ openssl req -x509 -newkey rsa:2048 -keyout front-proxy.key -out front-proxy.crt -days 3650 -nodes -subj '/CN=www.magedu.com'
+            #
+            - certificate_chain:
+                filename: "/etc/envoy/certs/front-proxy.crt"
+              private_key:
+                filename: "/etc/envoy/certs/front-proxy.key"
+
+  clusters:
+  - name: web_cluster_01
+    connect_timeout: 0.25s
+    type: STATIC
+    lb_policy: ROUND_ROBIN
+    load_assignment:
+      cluster_name: web_cluster_01
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address: { address: 172.31.7.11, port_value: 80 }
+        - endpoint:
+            address:
+              socket_address: { address: 172.31.7.12, port_value: 80 }
+#    transport_socket:
+#      name: envoy.transport_sockets.tls
+#      typed_config:
+#        "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext

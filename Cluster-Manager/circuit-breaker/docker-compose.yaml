@@ -1,0 +1,125 @@
+version: '3'
+
+services:
+  front-envoy:
+    image: envoyproxy/envoy:v1.29.2
+    volumes:
+      - ./front-envoy.yaml:/etc/envoy/envoy.yaml
+    networks:
+      - envoymesh
+    expose:
+      # Expose ports 80 (for general traffic) and 9901 (for the admin server)
+      - "80"
+      - "9901"
+
+  webserver01-sidecar:
+    image: envoyproxy/envoy:v1.29.2
+    volumes:
+    - ./envoy-sidecar-proxy.yaml:/etc/envoy/envoy.yaml
+    hostname: red
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.35.11
+        aliases:
+        - webservice1
+        - red
+
+  webserver01:
+    image: ikubernetes/demoapp:v1.0
+    environment:
+      - PORT=8080
+      - HOST=127.0.0.1
+    network_mode: "service:webserver01-sidecar"
+    depends_on:
+    - webserver01-sidecar
+
+  webserver02-sidecar:
+    image: envoyproxy/envoy:v1.29.2
+    volumes:
+    - ./envoy-sidecar-proxy.yaml:/etc/envoy/envoy.yaml
+    hostname: blue
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.35.12
+        aliases:
+        - webservice1
+        - blue
+
+  webserver02:
+    image: ikubernetes/demoapp:v1.0
+    environment:
+      - PORT=8080
+      - HOST=127.0.0.1
+    network_mode: "service:webserver02-sidecar"
+    depends_on:
+    - webserver02-sidecar
+
+  webserver03-sidecar:
+    image: envoyproxy/envoy:v1.29.2
+    volumes:
+    - ./envoy-sidecar-proxy.yaml:/etc/envoy/envoy.yaml
+    hostname: green
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.35.13
+        aliases:
+        - webservice1
+        - green
+
+  webserver03:
+    image: ikubernetes/demoapp:v1.0
+    environment:
+      - PORT=8080
+      - HOST=127.0.0.1
+    network_mode: "service:webserver03-sidecar"
+    depends_on:
+    - webserver03-sidecar
+
+  webserver04-sidecar:
+    image: envoyproxy/envoy:v1.29.2
+    volumes:
+    - ./envoy-sidecar-proxy.yaml:/etc/envoy/envoy.yaml
+    hostname: gray
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.35.14
+        aliases:
+        - webservice2
+        - gray
+
+  webserver04:
+    image: ikubernetes/demoapp:v1.0
+    environment:
+      - PORT=8080
+      - HOST=127.0.0.1
+    network_mode: "service:webserver04-sidecar"
+    depends_on:
+    - webserver04-sidecar
+
+  webserver05-sidecar:
+    image: envoyproxy/envoy:v1.29.2
+    volumes:
+    - ./envoy-sidecar-proxy.yaml:/etc/envoy/envoy.yaml
+    hostname: black
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.35.15
+        aliases:
+        - webservice2
+        - black
+
+  webserver05:
+    image: ikubernetes/demoapp:v1.0
+    environment:
+      - PORT=8080
+      - HOST=127.0.0.1
+    network_mode: "service:webserver05-sidecar"
+    depends_on:
+    - webserver05-sidecar
+
+networks:
+  envoymesh:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.35.0/24

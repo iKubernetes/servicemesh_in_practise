@@ -1,0 +1,102 @@
+# Author: MageEdu <mage@magedu.com>
+# Version: v1.0.2
+# Site: www.magedu.com
+#
+version: '3'
+
+services:
+  front-envoy:
+    image: envoyproxy/envoy:v1.29.2
+    volumes:
+      - ./front-envoy.yaml:/etc/envoy/envoy.yaml
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.33.2
+    expose:
+      # Expose ports 80 (for general traffic) and 9901 (for the admin server)
+      - "80"
+      - "9901"
+
+  e1:
+    image: ikubernetes/demoapp:v1.0
+    hostname: e1
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.33.11
+        aliases:
+          - e1
+    expose:
+      - "80"
+
+  e2:
+    image: ikubernetes/demoapp:v1.0
+    hostname: e2
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.33.12
+        aliases:
+          - e2
+    expose:
+      - "80"
+
+  e3:
+    image: ikubernetes/demoapp:v1.0
+    hostname: e3
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.33.13
+        aliases:
+          - e3
+    expose:
+      - "80"
+
+  e4:
+    image: ikubernetes/demoapp:v1.0
+    hostname: e4
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.33.14
+        aliases:
+          - e4
+    expose:
+      - "80"
+
+  e5:
+    image: ikubernetes/demoapp:v1.0
+    hostname: e5
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.33.15
+        aliases:
+          - e5
+    expose:
+      - "80"
+
+  e6:
+    image: ikubernetes/demoapp:v1.0
+    hostname: e6
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.33.16
+        aliases:
+          - e6
+    expose:
+      - "80"
+
+  e7:
+    image: ikubernetes/demoapp:v1.0
+    hostname: e7
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.33.17
+        aliases:
+          - e7
+    expose:
+      - "80"
+
+networks:
+  envoymesh:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.33.0/24

@@ -1,0 +1,90 @@
+# Author: MageEdu <mage@magedu.com>
+# Version: v1.0.1
+# Site: www.magedu.com
+#
+version: '3.3'
+
+services:
+  envoy:
+    image: envoyproxy/envoy:v1.29.2
+    volumes:
+    - ./front-envoy.yaml:/etc/envoy/envoy.yaml
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.27.2
+        aliases:
+        - front-proxy
+    depends_on:
+    - webserver01-sidecar
+    - webserver02-sidecar
+    - webserver03-sidecar
+
+  webserver01-sidecar:
+    image: envoyproxy/envoy:v1.29.2
+    volumes:
+    - ./envoy-sidecar-proxy.yaml:/etc/envoy/envoy.yaml
+    hostname: red
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.27.11
+        aliases:
+        - myservice
+        - red
+
+  webserver01:
+    image: ikubernetes/demoapp:v1.0
+    environment:
+      - PORT=8080
+      - HOST=127.0.0.1
+    network_mode: "service:webserver01-sidecar"
+    depends_on:
+    - webserver01-sidecar
+
+  webserver02-sidecar:
+    image: envoyproxy/envoy:v1.29.2
+    volumes:
+    - ./envoy-sidecar-proxy.yaml:/etc/envoy/envoy.yaml
+    hostname: blue
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.27.12
+        aliases:
+        - myservice
+        - blue
+
+  webserver02:
+    image: ikubernetes/demoapp:v1.0
+    environment:
+      - PORT=8080
+      - HOST=127.0.0.1
+    network_mode: "service:webserver02-sidecar"
+    depends_on:
+    - webserver02-sidecar
+
+  webserver03-sidecar:
+    image: envoyproxy/envoy:v1.29.2
+    volumes:
+    - ./envoy-sidecar-proxy.yaml:/etc/envoy/envoy.yaml
+    hostname: green
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.27.13
+        aliases:
+        - myservice
+        - green
+
+  webserver03:
+    image: ikubernetes/demoapp:v1.0
+    environment:
+      - PORT=8080
+      - HOST=127.0.0.1
+    network_mode: "service:webserver03-sidecar"
+    depends_on:
+    - webserver03-sidecar
+
+networks:
+  envoymesh:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.27.0/24

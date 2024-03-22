@@ -1,0 +1,44 @@
+version: '3.3'
+
+services:
+  envoy:
+    image: envoyproxy/envoy:v1.29.2
+    volumes:
+    - ./envoy.yaml:/etc/envoy/envoy.yaml
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.2.2
+        aliases:
+        - front-proxy
+    depends_on:
+    - webserver01
+    - webserver02
+
+  webserver01:
+    image: ikubernetes/demoapp:v1.0
+    environment:
+      - PORT=8080
+    hostname: webserver01
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.2.11
+        aliases:
+        - webserver01
+
+  webserver02:
+    image: ikubernetes/demoapp:v1.0
+    environment:
+      - PORT=8080
+    hostname: webserver02
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.2.12
+        aliases:
+        - webserver02
+
+networks:
+  envoymesh:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.2.0/24

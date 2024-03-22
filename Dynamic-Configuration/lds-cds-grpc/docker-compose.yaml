@@ -1,0 +1,79 @@
+version: '3.3'
+
+services:
+  envoy:
+    image: envoyproxy/envoy:v1.29.2
+    environment:
+      - ENVOY_UID=0
+      - ENVOY_GID=0
+    volumes:
+    - ./front-envoy.yaml:/etc/envoy/envoy.yaml
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.15.2
+        aliases:
+        - front-proxy
+    depends_on:
+    - webserver01
+    - webserver02
+    - xdsserver
+
+  webserver01:
+    image: ikubernetes/demoapp:v1.0
+    environment:
+      - PORT=8080
+      - HOST=127.0.0.1
+    hostname: webserver01
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.15.11
+
+  webserver01-sidecar:
+    image: envoyproxy/envoy:v1.29.2
+    volumes:
+    - ./envoy-sidecar-proxy.yaml:/etc/envoy/envoy.yaml
+    network_mode: "service:webserver01"
+    depends_on:
+    - webserver01
+
+  webserver02:
+    image: ikubernetes/demoapp:v1.0
+    environment:
+      - PORT=8080
+      - HOST=127.0.0.1
+    hostname: webserver02
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.15.12
+
+  webserver02-sidecar:
+    image: envoyproxy/envoy:v1.29.2
+    volumes:
+    - ./envoy-sidecar-proxy.yaml:/etc/envoy/envoy.yaml
+    network_mode: "service:webserver02"
+    depends_on:
+    - webserver02
+
+  xdsserver:
+    image: ikubernetes/envoy-xds-server:v0.2
+    environment:
+      - SERVER_PORT=18000
+      - NODE_ID=envoy_front_proxy
+      - RESOURCES_FILE=/etc/envoy-xds-server/config/config.yaml
+    volumes:
+    - ./resources:/etc/envoy-xds-server/config/
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.15.5
+        aliases:
+        - xdsserver
+        - xds-service
+    expose:
+    - "18000"
+
+networks:
+  envoymesh:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.15.0/24

@@ -1,0 +1,16 @@
+name: myconfig
+spec:
+  listeners:
+  - name: listener_http
+    address: 0.0.0.0
+    port: 80
+    routes:
+    - name: local_route
+      prefix: /
+      clusters:
+      - webcluster
+  clusters:
+  - name: webcluster
+    endpoints:
+    - address: 172.31.16.11
+      port: 80

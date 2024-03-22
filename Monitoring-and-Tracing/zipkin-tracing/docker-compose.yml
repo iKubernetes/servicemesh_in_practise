@@ -1,0 +1,103 @@
+# Author: MageEdu <mage@magedu.com>
+# www.magedu.com
+version: '3.3'
+
+services:
+  front-envoy:
+    image: envoyproxy/envoy:v1.29.2
+    environment:
+      - ENVOY_UID=0
+      - ENVOY_GID=0
+    volumes:
+    - "./front_envoy/envoy-config.yaml:/etc/envoy/envoy.yaml"
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.85.10
+        aliases:
+        - front-envoy
+        - front
+    ports:
+    - 8080:80
+    - 9901:9901
+
+  service_a_envoy:
+    #image: envoyproxy/envoy-alpine:v1.20.0
+    image: envoyproxy/envoy:v1.29.2
+    volumes:
+    - "./service_a/envoy-config.yaml:/etc/envoy/envoy.yaml"
+    networks:
+      envoymesh:
+        aliases:
+        - service_a_envoy
+        - service-a-envoy
+    ports:
+    - 8786
+    - 8788
+    - 8791
+
+  service_a:
+    build: service_a/
+    network_mode: "service:service_a_envoy"
+    #ports:
+    #- 8081
+    depends_on:
+    - service_a_envoy
+
+  service_b_envoy:
+    #image: envoyproxy/envoy-alpine:v1.20.0
+    image: envoyproxy/envoy:v1.29.2
+    volumes:
+    - "./service_b/envoy-config.yaml:/etc/envoy/envoy.yaml"
+    networks:
+      envoymesh:
+        aliases:
+        - service_b_envoy
+        - service-b-envoy
+    ports:
+    - 8789
+
+  service_b:
+    build: service_b/
+    network_mode: "service:service_b_envoy"
+    #ports:
+    #- 8082
+    depends_on:
+    - service_b_envoy
+
+  service_c_envoy:
+    #image: envoyproxy/envoy-alpine:v1.20.0
+    image: envoyproxy/envoy:v1.29.2
+    volumes:
+    - "./service_c/envoy-config.yaml:/etc/envoy/envoy.yaml"
+    networks:
+      envoymesh:
+        aliases:
+        - service_c_envoy
+        - service-c-envoy
+    ports:
+    - 8790
+
+  service_c:
+    build: service_c/
+    network_mode: "service:service_c_envoy"
+    #ports:
+    #- 8083
+    depends_on:
+    - service_c_envoy
+
+  zipkin:
+    image: openzipkin/zipkin:3
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.85.15
+        aliases:
+        - zipkin
+    ports:
+    - "9411:9411"
+
+networks:
+  envoymesh:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.85.0/24

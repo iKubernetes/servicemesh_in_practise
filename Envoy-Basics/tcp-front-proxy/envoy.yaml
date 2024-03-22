@@ -1,0 +1,30 @@
+# Author: MageEdu <mage@magedu.com>
+# Site: www.magedu.com
+static_resources:
+  listeners:
+    name: listener_0
+    address:
+      socket_address: { address: 0.0.0.0, port_value: 80 }
+    filter_chains:
+    - filters:
+      - name: envoy.tcp_proxy
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy
+          stat_prefix: tcp
+          cluster: local_cluster
+
+  clusters:
+  - name: local_cluster
+    connect_timeout: 0.25s
+    type: STATIC
+    lb_policy: ROUND_ROBIN
+    load_assignment:
+      cluster_name: local_cluster
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address: { address: 172.31.1.11, port_value: 8080 }
+        - endpoint:
+            address:
+              socket_address: { address: 172.31.1.12, port_value: 8080 }

@@ -1,0 +1,135 @@
+# Author: MageEdu <mage@magedu.com>
+# www.magedu.com
+version: '3.3'
+
+services:
+
+  front-envoy:
+    image: envoyproxy/envoy:v1.29.2
+    environment:
+      - ENVOY_UID=0
+      - ENVOY_GID=0
+    volumes:
+    - "./front_envoy/envoy-config.yaml:/etc/envoy/envoy.yaml"
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.70.10
+        aliases:
+        - front-envoy
+        - front
+    ports:
+    - 8080:80
+    - 9901:9901
+
+  service_a_envoy:
+    image: envoyproxy/envoy:v1.29.2
+    volumes:
+    - "./service_a/envoy-config.yaml:/etc/envoy/envoy.yaml"
+    networks:
+      envoymesh:
+        aliases:
+        - service_a_envoy
+        - service-a-envoy
+    ports:
+    - 8786:8786
+    - 8788:8788
+
+  service_a:
+    build: service_a/
+    networks:
+      envoymesh:
+        aliases:
+        - service_a
+        - service-a
+    ports:
+    - 8081:8081
+
+  service_b_envoy:
+    image: envoyproxy/envoy:v1.29.2
+    volumes:
+    - "./service_b/envoy-config.yaml:/etc/envoy/envoy.yaml"
+    networks:
+      envoymesh:
+        aliases:
+        - service_b_envoy
+        - service-b-envoy
+    ports:
+    - 8789:8789
+
+  service_b:
+    build: service_b/
+    networks:
+      envoymesh:
+        aliases:
+        - service_b
+        - service-b
+    ports:
+    - 8082:8082
+
+  service_c_envoy:
+    image: envoyproxy/envoy:v1.29.2
+    volumes:
+    - "./service_c/envoy-config.yaml:/etc/envoy/envoy.yaml"
+    networks:
+      envoymesh:
+        aliases:
+        - service_c_envoy
+        - service-c-envoy
+    ports:
+    - 8790:8790
+
+  service_c:
+    build: service_c/
+    networks:
+      envoymesh:
+        aliases:
+        - service_c
+        - service-c
+    ports:
+    - 8083:8083
+
+  statsd_exporter:
+    image: prom/statsd-exporter:v0.26.0    
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.70.66
+        aliases:
+        - statsd_exporter
+    ports:
+    - 9125:9125
+    - 9102:9102
+
+  prometheus:
+    image: prom/prometheus:v2.51.0
+    volumes:
+    - "./prometheus/config.yaml:/etc/prometheus.yaml"
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.70.67
+        aliases:
+        - prometheus
+    ports:
+    - 9090:9090
+    command: "--config.file=/etc/prometheus.yaml"
+
+  grafana:
+    image: grafana/grafana:10.3.4
+    volumes:
+    - "./grafana/grafana.ini:/etc/grafana/grafana.ini"
+    - "./grafana/datasource.yaml:/etc/grafana/provisioning/datasources/datasource.yaml"
+    - "./grafana/dashboard.yaml:/etc/grafana/provisioning/dashboards/dashboard.yaml"
+    - "./grafana/dashboard.json:/etc/grafana/provisioning/dashboards/dashboard.json"
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.70.68
+        aliases:
+        - grafana
+    ports:
+    - 3000:3000
+
+networks:
+  envoymesh:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.70.0/24

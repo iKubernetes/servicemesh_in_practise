@@ -1,0 +1,108 @@
+version: '3.3'
+
+services:
+  envoy:
+    image: envoyproxy/envoy-alpine:v1.21-latest
+    environment:
+      - ENVOY_UID=0
+      - ENVOY_GID=0
+    volumes:
+    - ./front-envoy.yaml:/etc/envoy/envoy.yaml
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.68.10
+        aliases:
+        - front-proxy
+    expose:
+      # Expose ports 80 (for general traffic) and 9901 (for the admin server)
+      - "80"
+      - "9901"
+
+  service_blue:
+    image: ikubernetes/servicemesh-app:latest
+    volumes:
+      - ./service_blue/service-envoy.yaml:/etc/envoy/envoy.yaml
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.68.11
+        aliases:
+          - myservice
+          - blue
+    environment:
+      - SERVICE_NAME=blue
+    expose:
+      - "80"
+
+  service_green:
+    image: ikubernetes/servicemesh-app:latest
+    volumes:
+      - ./service_green/service-envoy.yaml:/etc/envoy/envoy.yaml
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.68.12
+        aliases:
+          - myservice
+          - green
+    environment:
+      - SERVICE_NAME=green
+    expose:
+      - "80"
+
+  service_red:
+    image: ikubernetes/servicemesh-app:latest
+    volumes:
+      - ./service_red/service-envoy.yaml:/etc/envoy/envoy.yaml
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.68.13
+        aliases:
+          - myservice
+          - red
+    environment:
+      - SERVICE_NAME=red
+    expose:
+      - "80"
+
+  statsd_exporter:
+    image: prom/statsd-exporter:v0.22.3
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.68.6
+        aliases:
+        - statsd_exporter
+    ports:
+    - 9125:9125
+    - 9102:9102
+
+  prometheus:
+    image: prom/prometheus:v2.30.3
+    volumes:
+    - "./prometheus/config.yaml:/etc/prometheus.yaml"
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.68.7
+        aliases:
+        - prometheus
+    ports:
+    - 9090:9090
+    command: "--config.file=/etc/prometheus.yaml"
+
+  grafana:
+    image: grafana/grafana:8.2.2
+    volumes:
+    - "./grafana/grafana.ini:/etc/grafana/grafana.ini"
+    - "./grafana/datasource.yaml:/etc/grafana/provisioning/datasources/datasource.yaml"
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.68.8
+        aliases:
+        - grafana
+    ports:
+    - 3000:3000
+
+networks:
+  envoymesh:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.68.0/24

@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  envoy:
+    image: envoyproxy/envoy:v1.29.2
+    volumes:
+    - ./envoy.yaml:/etc/envoy/envoy.yaml
+    environment:
+      - ENVOY_UID=0
+      - ENVOY_GID=0
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.3.2
+        aliases:
+        - ingress
+
+  webserver01:
+    image: ikubernetes/demoapp:v1.0
+    environment:
+      - PORT=8080
+      - HOST=127.0.0.1
+    network_mode: "service:envoy"
+    depends_on:
+    - envoy
+
+networks:
+  envoymesh:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.3.0/24

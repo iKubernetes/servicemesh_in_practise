@@ -1,0 +1,25 @@
+filebeat.inputs:
+- type: log
+  paths: 
+    - '/logs/envoy/*access.log'
+
+processors:
+- decode_json_fields:
+    fields: ["message"]
+    target: ""
+    overwrite_keys: true
+
+output.elasticsearch:
+  hosts: ["http://elasticsearch:9200"]
+  indices:
+    - index: "filebeat-%{+yyyy.MM.dd}"
+#    - index: "filebeat-%{[agent.version]}-%{+yyyy.MM.dd}"
+
+#output.console:
+#  enabled: true
+#  codec.json:
+#    pretty: true
+#    #escape_html: false
+
+logging.json: true
+logging.metrics.enabled: false

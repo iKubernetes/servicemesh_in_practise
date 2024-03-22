@@ -1,0 +1,74 @@
+version: '3'
+
+services:
+  front-envoy:
+    image: envoyproxy/envoy:v1.29.2
+    environment:
+      - ENVOY_UID=0
+      - ENVOY_GID=0
+    volumes:
+      - ./front-envoy.yaml:/etc/envoy/envoy.yaml
+    networks:
+      envoymesh:
+        ipv4_address: 172.31.55.10
+    expose:
+      # Expose ports 80 (for general traffic) and 9901 (for the admin server)
+      - "80"
+      - "9901"
+
+  demoapp-v1.0-1:
+    image: ikubernetes/demoapp:v1.0
+    hostname: demoapp-v1.0-1
+    networks:
+      envoymesh:
+        aliases:
+          - demoappv10
+    expose:
+      - "80"      
+      
+  demoapp-v1.0-2:
+    image: ikubernetes/demoapp:v1.0
+    hostname: demoapp-v1.0-2
+    networks:
+      envoymesh:
+        aliases:
+          - demoappv10
+    expose:
+      - "80"  
+      
+  demoapp-v1.0-3:
+    image: ikubernetes/demoapp:v1.0
+    hostname: demoapp-v1.0-3
+    networks:
+      envoymesh:
+        aliases:
+          - demoappv10
+    expose:
+      - "80" 
+      
+  demoapp-v1.1-1:
+    image: ikubernetes/demoapp:v1.1
+    hostname: demoapp-v1.1-1
+    networks:
+      envoymesh:
+        aliases:
+          - demoappv11
+    expose:
+      - "80"      
+      
+  demoapp-v1.1-2:
+    image: ikubernetes/demoapp:v1.1
+    hostname: demoapp-v1.1-2
+    networks:
+      envoymesh:
+        aliases:
+          - demoappv11
+    expose:
+      - "80"  
+
+networks:
+  envoymesh:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.55.0/24
